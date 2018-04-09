@@ -1,0 +1,16 @@
+{
+  "name": "zteemio",
+  "version": "0.0.1",
+  "description": "Zteem.io Snake, Pacman mashup for the Steem blockchain.",
+  "main": "zteemio",
+  "dependencies": {
+    "pixi.js": "^4.7.3",
+    "sat": "^0.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Spelmakare Jens Nilsson",
+  "license": "MIT"
+}
