@@ -1,10 +1,10 @@
 {
-    "short_name": "SWnEWn",
-    "name": "SWnEWn",
-    "start_url": "/steem/swnewn",
+    "short_name": "Zteem.io",
+    "name": "Zteem",
+    "start_url": "/steem/zteemio",
     "icons": [
         {
-            "src": "/steem/swnewn_files/images/hamster.png",
+            "src": "/steem/zteemio_files/images/zteemio_app.png",
             "sizes": "64x64",
             "type": "image/png"
         }

@@ -7,6 +7,21 @@ module.exports = {
         img: "zteemio_files/images/"
     },
 
+    app: {
+        name: "zteemio"
+    },
+
+    sc2Conf: {
+        active: true,
+        debug: true,
+        domainDebug: "dev.spelmakare.se",
+        domainLive: "spelmakare.se",
+        expires: 604800,
+        callBackURLDebug: "http://dev.spelmakare.se/steem/zteemio",
+        callBackURL: "https://spelmakare.se/steem/zteemio",
+        scope: ["comment"]
+    },
+
     // DynamicObject AI
     ai: {
         cellUpdateRate: 2, // How often to check for cells object is in. 6 = ten times a sec at 60 frames.

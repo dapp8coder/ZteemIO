@@ -8,6 +8,7 @@ const { World } = require("./world");
 const { StaticObject, StaticTiledObject } = require("./staticobject");
 const { Psy, Star, PUOutOfPhase, PURepel, PUFreeze, PUMunch } = require("./itemobject");
 const { Grid } = require("./grid");
+const { JSC2 } = require("./lib/jsc2");
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +145,8 @@ JPixi.Event.Start(() => {
 
     }
 
-    var instruction = JPixi.Text.CreateMessage("logo", "Click/Touch to begin.", appConf.cameraWidth / 2.5, appConf.cameraHeight / 1.5, 0xFFFFFF);
+    var instruction = JPixi.Text.CreateMessage("logo", "Click/Touch to begin.", appConf.cameraWidth / 2, appConf.cameraHeight / 1.5, 0xFFFFFF);
+    instruction.position.x -= instruction.width / 2;
 
     black.on("pointerup", event => {
         event.stopPropagation();
@@ -158,6 +160,15 @@ JPixi.Event.Start(() => {
         mainMenu = false;
     });
 
+    var playerName = JPixi.Text.CreateMessage("playerName", "Name: Anonymous", appConf.cameraWidth / 2, 20, 0xFFFFFF);
+    playerName.position.x -= playerName.width / 2;
+    App.stage.addChild(playerName);
+
+    var jSC2 = new JSC2();
+
+    jSC2.GetProfile(profile => {
+        playerName.text = "Name: " + profile.user;
+    });
 
     // Begin game 
     App.AddTicker(delta => {
@@ -167,8 +178,6 @@ JPixi.Event.Start(() => {
         else MainMenu(delta);
     });
 });
-
-
 
 JPixi.Event.FullScreen(() => {
     if (leaveFullScreen.visible) {

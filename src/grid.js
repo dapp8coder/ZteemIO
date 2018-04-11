@@ -3,6 +3,7 @@ const { JPixi } = require("./lib/jpixi");
 const { World } = require("./world");
 const { appConf } = require("./lib/jpixi_config");
 const { DynamicTypes, Prop } = require("./baseobject");
+const { MergeArrays } = require("./lib/jhelper");
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,9 +215,9 @@ class Grid {
         }
 
         if (count === 1) return mergedIndexList[0];
-        else if (count === 2) return this.MergeArrays(mergedIndexList[0], mergedIndexList[1]);
-        else if (count === 3) return this.MergeArrays(mergedIndexList[0], mergedIndexList[1], mergedIndexList[2]);
-        else if (count === 4) return this.MergeArrays(mergedIndexList[0], mergedIndexList[1], mergedIndexList[2], mergedIndexList[3]);
+        else if (count === 2) return MergeArrays(mergedIndexList[0], mergedIndexList[1]);
+        else if (count === 3) return MergeArrays(mergedIndexList[0], mergedIndexList[1], mergedIndexList[2]);
+        else if (count === 4) return MergeArrays(mergedIndexList[0], mergedIndexList[1], mergedIndexList[2], mergedIndexList[3]);
         else return mergedIndexList;
     }
 
@@ -279,27 +280,6 @@ class Grid {
         }
 
         return indexList;
-    }
-
-    /**
-     * Merge two or more arrays, fetched from:
-     * 
-     * https://codegolf.stackexchange.com/a/17129
-     */
-    MergeArrays() {
-        var args = arguments;
-        var hash = {};
-        var arr = [];
-        for (var i = 0; i < args.length; i++) {
-            for (var j = 0; j < args[i].length; j++) {
-                if (hash[args[i][j]] !== true) {
-                    arr[arr.length] = args[i][j];
-                    hash[args[i][j]] = true;
-                }
-            }
-        }
-
-        return arr;
     }
 
     /** 
