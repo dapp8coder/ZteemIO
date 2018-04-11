@@ -9,7 +9,7 @@ const { StaticObject, StaticTiledObject } = require("./staticobject");
 const { Psy, Star, PUOutOfPhase, PURepel, PUFreeze, PUMunch } = require("./itemobject");
 const { Grid } = require("./grid");
 const { JSC2 } = require("./lib/jsc2");
-
+const { site } = require("./config");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PIXI
@@ -31,10 +31,10 @@ var world;
 
 JPixi.Event.Init(() => {
     var resList = [
-        "zteemio_files/images/zoomIn.png",
-        "zteemio_files/images/zoomOut.png",
-        "zteemio_files/images/black1px.png",
-        "zteemio_files/images/white1px.png"
+        site.img + "zoomIn.png",
+        site.img + "zoomOut.png",
+        site.img + "black1px.png",
+        site.img + "white1px.png"
     ];
 
     JPixi.Resources.AddArray(resList);
@@ -45,52 +45,37 @@ JPixi.Event.Start(() => {
     world = new World();
 
     // World ends 32px wide colliders along edges of window.
-    var up = new StaticTiledObject("zteemio_files/images/black1px.png", world, 0, -32, appConf.worldWidth, 32);
+    var up = new StaticTiledObject(site.img + "black1px.png", world, 0, -32, appConf.worldWidth, 32);
     up.alpha = 0;
-    var right = new StaticTiledObject("zteemio_files/images/black1px.png", world, appConf.worldWidth, 0, 32, appConf.worldHeight);
+    var right = new StaticTiledObject(site.img + "black1px.png", world, appConf.worldWidth, 0, 32, appConf.worldHeight);
     right.alpha = 0;
-    var down = new StaticTiledObject("zteemio_files/images/black1px.png", world, 0, appConf.worldHeight, appConf.worldWidth, 32);
+    var down = new StaticTiledObject(site.img + "black1px.png", world, 0, appConf.worldHeight, appConf.worldWidth, 32);
     down.alpha = 0;
-    var left = new StaticTiledObject("zteemio_files/images/black1px.png", world, -32, 0, 32, appConf.worldHeight);
+    var left = new StaticTiledObject(site.img + "black1px.png", world, -32, 0, 32, appConf.worldHeight);
     left.alpha = 0;
 
     // Star
     for (var i = 0; i < 2000; i++) {
-        var star = new Star("zteemio_files/images/white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 8, 8, true);
+        var star = new Star(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 8, 8, true);
     }
 
     // Player
-    var player = new Player("zteemio_files/images/white1px.png", world, appConf.worldWidth / 2, appConf.worldHeight / 2, 24, 24);
+    var player = new Player(site.img + "white1px.png", world, appConf.worldWidth / 2, appConf.worldHeight / 2, 24, 24);
     world.camera.SetTarget(player);
 
     // Power ups
     for (var i = 0; i < 5; i++) {
-        var puoop = new PUOutOfPhase("zteemio_files/images/white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
+        var puoop = new PUOutOfPhase(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
     }
     for (var i = 0; i < 5; i++) {
-        var purepel = new PURepel("zteemio_files/images/white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
+        var purepel = new PURepel(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
     }
     for (var i = 0; i < 5; i++) {
-        var pufreeze = new PUFreeze("zteemio_files/images/white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
+        var pufreeze = new PUFreeze(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
     }
     for (var i = 0; i < 5; i++) {
-        var pumunch = new PUMunch("zteemio_files/images/white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
+        var pumunch = new PUMunch(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
     }
-
-    // Psy
-    /*var posX = 8;
-    var posY = 8;
-    
-    for (var i = 0; i < 68; i++) {
-        for (var j = 0; j < 120; j++) {
-            var psy = new Psy("zteemio_files/images/white1px.png", world, posX, posY, 16, 16, true);
-            psy.sprite.alpha = 0;
-    
-            posX += 16;
-        }
-        posX = 8;
-        posY += 16;
-    }*/
 
     // FPS
     // var FPS = JPixi.Text.CreateFPS();
@@ -98,7 +83,7 @@ JPixi.Event.Start(() => {
     // START OF GAME
     var mainMenu = true;
 
-    var black = new JPixi.Sprite.Create("zteemio_files/images/black1px.png", 0, 0, appConf.worldWidth, appConf.worldHeight, null, false);
+    var black = new JPixi.Sprite.Create(site.img + "black1px.png", 0, 0, appConf.worldWidth, appConf.worldHeight, null, false);
     black.interactive = true;
     App.stage.addChild(black);
 

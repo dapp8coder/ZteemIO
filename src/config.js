@@ -1,14 +1,11 @@
 "use strict";
 
 module.exports = {
-    p: {
+    site: {
+        name: "zteemio",
         root: "zteemio_files/",
         lib: "zteemio_files/lib/",
         img: "zteemio_files/images/"
-    },
-
-    app: {
-        name: "zteemio"
     },
 
     sc2Conf: {

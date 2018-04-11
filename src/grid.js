@@ -4,6 +4,7 @@ const { World } = require("./world");
 const { appConf } = require("./lib/jpixi_config");
 const { DynamicTypes, Prop } = require("./baseobject");
 const { MergeArrays } = require("./lib/jhelper");
+const { site } = require("./config");
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,7 +313,7 @@ class Cell {
         this.world = world;
         this.index = index;
         this.prop = new Prop(posX, posY, width, height);
-        //this.sprite = JPixi.Sprite.Create("zteemio_files/images/black1px.png", this.prop.x, this.prop.y, this.prop.width, this.prop.height, grid.container);//Debug
+        //this.sprite = JPixi.Sprite.Create(site.img+"black1px.png", this.prop.x, this.prop.y, this.prop.width, this.prop.height, grid.container);//Debug
         // this.sprite.tint = 0xFF0000 * Math.random(); //Debug
         // this.sprite.alpha = 0.3; //Debug
 

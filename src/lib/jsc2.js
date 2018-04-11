@@ -1,4 +1,4 @@
-const { app, sc2Conf } = require("../config");
+const { site, sc2Conf } = require("../config");
 const { GetURLParameter } = require("./jhelper");
 const Cookies = require("cookies-js");
 
@@ -45,7 +45,7 @@ class JSC2 {
 
         if (sc2Conf.debug) {
             this.sc2 = require("sc2-sdk").Initialize({
-                app: app.name,
+                app: site.name,
                 callbackURL: sc2Conf.callBackURLDebug,
                 accessToken: this.accessToken,
                 scope: sc2Conf.scope
@@ -53,7 +53,7 @@ class JSC2 {
         }
         else {
             this.sc2 = require("sc2-sdk").Initialize({
-                app: app.name,
+                app: site.name,
                 callbackURL: c2Conf.callBackURL,
                 accessToken: this.accessToken,
                 scope: sc2Conf.scope

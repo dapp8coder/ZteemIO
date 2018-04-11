@@ -4,7 +4,7 @@ const { World, LimitTypes } = require("./world");
 const { BaseObject, BaseObjectColl, ColliderTypes, Prop, DynamicTypes } = require("./baseobject");
 const { StaticObject } = require("./staticobject");
 const { Grid, Cell } = require("./grid");
-const { ai, player } = require("./config");
+const { ai, player, site } = require("./config");
 const SAT = require("sat");
 const { Target } = require("./target");
 
@@ -226,7 +226,7 @@ class Player extends DynamicObject {
         this.speed = 0;
 
         /**@type {PIXI.Sprite} */
-        this.inputDetection = new JPixi.Sprite.Create("zteemio_files/images/black1px.png", 0, 0, appConf.worldWidth, appConf.worldHeight, this.world.layerBottom, false);
+        this.inputDetection = new JPixi.Sprite.Create(site.img + "black1px.png", 0, 0, appConf.worldWidth, appConf.worldHeight, this.world.layerBottom, false);
         // this.inputDetection.alpha = 0;
         this.inputDetection.interactive = true;
         this.inputDetection.on("pointerdown", event => { event.stopPropagation(); this.OnPointerDown(event); });
@@ -336,7 +336,7 @@ class Player extends DynamicObject {
 
     AddFriend() {
         var index = this.friends.length;
-        this.friends[index] = new Friend("zteemio_files/images/white1px.png", this.world, this.prop.x, this.prop.y, 8, 8);
+        this.friends[index] = new Friend(site.img + "white1px.png", this.world, this.prop.x, this.prop.y, 8, 8);
 
         if (index <= 0) {
             this.friends[index].target.SetTarget(this);

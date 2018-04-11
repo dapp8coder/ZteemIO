@@ -4,6 +4,7 @@ const { World } = require("./world");
 const { DynamicObject } = require("./dynamicobject")
 const { BaseObject } = require("./baseobject")
 const { Prop } = require("./baseobject")
+const { site } = require("./config")
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +27,7 @@ class Camera {
         this.container = JPixi.Container.Create(appConf.cameraWidth, appConf.cameraHeight);
 
         //Culling box
-        this.sprite = JPixi.Sprite.Create("zteemio_files/images/black1px.png", 0, 0, appConf.cameraWidth, appConf.cameraHeight, this.container);
+        this.sprite = JPixi.Sprite.Create(site.img + "black1px.png", 0, 0, appConf.cameraWidth, appConf.cameraHeight, this.container);
         this.AddToResizeList(this.sprite, ResizeTypes.FullSize);
         this.sprite.alpha = 0;
         //  this.sprite.tint = 0x00FF00; //Debug

@@ -40,39 +40,6 @@ class Item extends BaseObjectColl {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// PSY OBJECT EXTENSION
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-class Psy extends Item {
-    /**
-     * 
-     * @param {string} resourcePath path to image file to use as sprite.
-     * @param {Number} posX postition X in world container.
-     * @param {Number} posY postition Y in world container.
-     * @param {Number} width width of sprite.
-     * @param {Number} height height of sprite.
-     * @param {World} world what world this object is in.
-     */
-    constructor(resourcePath, world, posX, posY, width, height, centerAnchor = false) {
-        super(resourcePath, world, posX, posY, width, height, centerAnchor);
-    }
-
-    Update(cell) {
-        if (cell.FramesBetweenUpdates(item.interactUpdateRate)) {
-            var player = cell.player[0];
-
-            if (player != undefined && this.world.CollideBoxCircle(this.collider, player.collider)) this.CollisionPlayer();
-        }
-    }
-
-    CollisionPlayer() {
-        this.sprite.tint = 0x0000FF * Math.random();
-        this.sprite.alpha = 1;
-    }
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // STAR OBJECT EXTENSION
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -253,7 +220,6 @@ class PUMunch extends PowerUp {
 
 module.exports = {
     Item,
-    Psy,
     Star,
     PUOutOfPhase,
     PURepel,
