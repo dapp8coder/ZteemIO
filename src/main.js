@@ -83,25 +83,28 @@ JPixi.Event.Start(() => {
     // START OF GAME
     var mainMenu = true;
 
-    var black = new JPixi.Sprite.Create(site.img + "black1px.png", 0, 0, appConf.worldWidth, appConf.worldHeight, null, false);
-    black.interactive = true;
-    App.stage.addChild(black);
+    var black = new JPixi.Sprite.CreateGui(site.img + "black1px.png", 0, 0, appConf.worldWidth, appConf.worldHeight, world.camera);
+    world.camera.AddToResizeList(black, ResizeTypes.FullSize);
+
+    black.Input(true, true, "pointerup", event => {
+        event.stopPropagation();
+
+        world.camera.container.removeChild(black);
+        world.camera.container.removeChild(instruction);
+        world.camera.container.removeChild(logoContainer);
+
+        mainMenu = false;
+    });
 
     var logoText = ["Z", "t", "e", "e", "m", ".", "i", "o"];
     /**@type {PIXI.Text[]} */
     var logoArray = [];
 
-    if (appConf.cameraWidth > appConf.cameraHeight) {
-        for (var i = 0; i < logoText.length; i++) {
-            logoArray[i] = JPixi.Text.CreateMessage("logo", logoText[i], appConf.cameraWidth / 4 + 75 * i, appConf.cameraHeight / 3, 0xFFFFFF);
-            logoArray[i].style.fontSize = 36;
-        }
-    }
-    else {
-        for (var i = 0; i < logoText.length; i++) {
-            logoArray[i] = JPixi.Text.CreateMessage("logo", logoText[i], appConf.cameraWidth / 8 + 50 * i, appConf.cameraHeight / 4, 0xFFFFFF);
-            logoArray[i].style.fontSize = 36;
-        }
+    var logoContainer = new JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, true, 150, 0, 0, world.camera);
+
+    for (var i = 0; i < logoText.length; i++) {
+        logoArray[i] = JPixi.Text.CreateMessage("logo", logoText[i], i * 50, 0, 0xFFFFFF, undefined, logoContainer);
+        logoArray[i].style.fontSize = 34;
     }
 
     var count = 0;
@@ -127,27 +130,10 @@ JPixi.Event.Start(() => {
             if (logoArray[i].position.y <= appConf.cameraHeight / 2) logoArray[i].position.y += Math.random() * delta * dir * -1;
             else logoArray[i].position.y -= Math.random() * delta * dir * -1;
         }
-
     }
 
-    var instruction = JPixi.Text.CreateMessage("logo", "Click/Touch to begin.", appConf.cameraWidth / 2, appConf.cameraHeight / 1.5, 0xFFFFFF);
-    instruction.position.x -= instruction.width / 2;
-
-    black.on("pointerup", event => {
-        event.stopPropagation();
-
-        App.stage.removeChild(black);
-        App.stage.removeChild(instruction);
-
-        for (var i = 0; i < logoArray.length; i++) {
-            App.stage.removeChild(logoArray[i]);
-        }
-        mainMenu = false;
-    });
-
-    var playerName = JPixi.Text.CreateMessage("playerName", "Name: Anonymous", appConf.cameraWidth / 2, 20, 0xFFFFFF);
-    playerName.position.x -= playerName.width / 2;
-    App.stage.addChild(playerName);
+    var instruction = JPixi.Text.CreateMessage("logo", "Click/Touch to begin.", true, -60, 0xFFFFFF, world.camera);
+    var playerName = JPixi.Text.CreateMessage("playerName", "Name: Anonymous", true, 20, 0xFFFFFF, world.camera);
 
     var jSC2 = new JSC2();
 
@@ -162,6 +148,8 @@ JPixi.Event.Start(() => {
         if (!mainMenu) world.Update(delta);
         else MainMenu(delta);
     });
+
+    world.camera.ResizeList();
 });
 
 JPixi.Event.FullScreen(() => {

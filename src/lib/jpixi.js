@@ -186,7 +186,7 @@ function BrowserIsFullScreen() {
 // CONTAINER
 ///////////////////////////////////////////////////////////////////////////////
 
-function ContainerCreate(width, height, pivotX = 0, pivotY = 0, parentContainer = null) {
+function ContainerCreate(width, height, posX = 0, posY = 0, pivotX = 0, pivotY = 0, camera = undefined, parentContainer = undefined) {
     var container = new PIXI.Container();
 
     container.width = width;
@@ -194,8 +194,23 @@ function ContainerCreate(width, height, pivotX = 0, pivotY = 0, parentContainer 
     container.pivot.x = pivotX;
     container.pivot.y = pivotY;
 
-    if (parentContainer == null) app.stage.addChild(container);
-    else parentContainer.addChild(container);
+    if (camera != undefined) {
+        MakeRelativePosition(container, posX, posY);
+
+        if (parentContainer == undefined) {
+            camera.container.addChild(container);
+            camera.AddToResizeList(container, 1, posX, posY);
+        }
+        else parentContainer.addChild(container);
+    }
+
+    else {
+        container.position.x = posX;
+        container.position.y = posY;
+
+        if (parentContainer == undefined) app.stage.addChild(container);
+        else parentContainer.addChild(container);
+    }
 
     return container;
 }
@@ -217,7 +232,7 @@ function ContainerSort(container, index) {
  * @param {number} updateRate ms inbetween text updates of FPS.
  * @returns {Function} Function that calculates FPS, run in game loop.
  */
-function TextCreateFPS(updateRate = 1000) {
+function TextCreateFPS(updateRate = 1000, container = undefined) {
     var fpsText = new PIXI.Text("00", { fontFamily: "Arial", fontSize: 18, fill: 0x55AAFF, align: "center" });
 
     var filterStrength = 20;
@@ -227,7 +242,8 @@ function TextCreateFPS(updateRate = 1000) {
         fpsText.text = (1000 / frameTime).toString().substring(0, 2);
     }, updateRate);
 
-    app.stage.addChild(fpsText);
+    if (container != undefined) container.addChild(fpsText);
+    else app.stage.addChild(fpsText);
 
     return () => {
         var thisFrameTime = (thisLoop = new Date) - lastLoop;
@@ -236,18 +252,45 @@ function TextCreateFPS(updateRate = 1000) {
     }
 }
 
+function MakeRelativePosition(pixiObject, posX, posY) {
+    if (posX === true) {
+        pixiObject.position.x = (appConf.cameraWidth / 2) - (pixiObject.width / 2);
+    }
+    else {
+        if (posX < 0) pixiObject.position.x = appConf.cameraWidth + posX - pixiObject.width;
+        else pixiObject.position.x = posX;
+    }
+
+    if (posY === true) {
+        pixiObject.position.y = (appConf.cameraHeight / 2) - (pixiObject.height / 2);
+    }
+    else {
+
+        if (posY < 0) pixiObject.position.y = appConf.cameraHeight + posY - pixiObject.height;
+        else pixiObject.position.y = posY;
+    }
+}
+
 /**
- * Show custom text.
+ * Show custom text, position relative to the camera.
  * 
  * @param {string} message
+ * @param {Number| Boolean} posX If true center horizontal.
+ * @param {Number | Boolean} posY If true center vertical.
  */
-function TextCreateMessage(name, message, posX, posY, color) {
+function TextCreateMessage(name, message, posX, posY, color, camera, container = undefined) {
     var msgText = new PIXI.Text("00", { fontFamily: "Courier", fontSize: 18, fill: color, align: "center", strokeThickness: 5 });
     msgText.text = message;
-    msgText.position.set(posX, posY);
+
+    MakeRelativePosition(msgText, posX, posY);
+
     msgText.name = name;
 
-    app.stage.addChild(msgText);
+    if (container == undefined) {
+        camera.container.addChild(msgText);
+        camera.AddToResizeList(msgText, 1, posX, posY);
+    }
+    else container.addChild(msgText);
 
     return msgText;
 }
@@ -257,7 +300,7 @@ function TextCreateMessage(name, message, posX, posY, color) {
 // SPRITES
 ///////////////////////////////////////////////////////////////////////////////
 
-function SpriteCreate(resourcePath, posX = 0, posY = 0, width = -1, height = -1, container = null, centerAnchor = false) {
+function SpriteCreate(resourcePath, posX = 0, posY = 0, width = -1, height = -1, container = undefined, centerAnchor = false) {
     var sprite = new PIXI.Sprite(PIXI.loader.resources[resourcePath].texture);
     if (centerAnchor) sprite.anchor.set(0.5, 0.5);
 
@@ -265,12 +308,12 @@ function SpriteCreate(resourcePath, posX = 0, posY = 0, width = -1, height = -1,
     if (width != -1) sprite.width = width;
     if (height != -1) sprite.height = height;
 
-    if (container != null) container.addChild(sprite);
+    if (container != undefined) container.addChild(sprite);
 
     return sprite;
 }
 
-function SpriteCreateTiling(resourcePath, posX = 0, posY = 0, width, height, container = null, centerAnchor = false) {
+function SpriteCreateTiling(resourcePath, posX = 0, posY = 0, width, height, container = undefined, centerAnchor = false) {
     var tilingSprite = new PIXI.extras.TilingSprite(
         PIXI.loader.resources[resourcePath].texture,
         width,
@@ -281,24 +324,36 @@ function SpriteCreateTiling(resourcePath, posX = 0, posY = 0, width, height, con
 
     tilingSprite.position.set(posX, posY);
 
-    if (container != null) container.addChild(tilingSprite);
+    if (container != undefined) container.addChild(tilingSprite);
 
     return tilingSprite;
 }
 
-function SpriteCreateGui(resourcePath, posX, posY, width = -1, height = -1, container = null, visibleOnOff = true) {
+/**
+ * Gui is positioned relative to the camera (window/screen).
+ * 
+ * @param {String} resourcePath 
+ * @param {Number | Boolean} posX 
+ * @param {Number | Boolean} posY
+ * @param {Number} width 
+ * @param {Number} height
+ * @param {Camera} camera 
+ * @param {Container} container 
+ * @param {Boolean} visibleOnOff 
+ */
+function SpriteCreateGui(resourcePath, posX, posY, width = -1, height = -1, camera, container = undefined, visibleOnOff = true) {
     var sprite = SpriteCreate(resourcePath);
 
-    if (posX < 0) sprite.x = appConf.cameraWidth + posX;
-    else sprite.x = posX;
+    MakeRelativePosition(sprite, posX, posY);
 
-    if (posY < 0) sprite.y = appConf.cameraHeight + posY;
-    else sprite.y = posY;
+    if (container == undefined) {
+        camera.container.addChild(sprite);
+        camera.AddToResizeList(sprite, 1, posX, posY);
+    }
+    else container.addChild(sprite);
 
     if (width != -1) sprite.width = width;
     if (height != -1) sprite.height = height;
-
-    if (container != null) container.addChild(sprite);
 
     sprite.visible = visibleOnOff;
 
@@ -350,6 +405,10 @@ module.exports = {
         Text: {
             CreateFPS: TextCreateFPS,
             CreateMessage: TextCreateMessage
+        },
+        Helper: {
+            MakeRelativePosition,
+            TriggerPixiEvent
         }
     },
     App: {

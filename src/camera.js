@@ -90,7 +90,21 @@ class Camera {
      * @param {Number} offSetY Offset from camera height. Negative number is offset from bottom.
      */
     AddToResizeList(pixiObject, resizeType, offSetX = 0, offSetY = 0) {
+        this.RemoveFromResizeList(pixiObject);
         this.resizePixiObjects.push({ pixiObject: pixiObject, offSetX: offSetX, offSetY: offSetY, resizeType: resizeType });
+    }
+
+    /**
+    * Remove obejcts from the camera resize list.
+    *
+    */
+    RemoveFromResizeList(pixiObject) {
+        for (var i = 0; i < this.resizePixiObjects.length; i++) {
+            if (this.resizePixiObjects[i].pixiObject === pixiObject) {
+                this.resizePixiObjects.splice(i, 1);
+                return;
+            }
+        }
     }
 
     /**
@@ -109,7 +123,7 @@ class Camera {
                     break;
 
                 case ResizeTypes.Position:
-                    item.pixiObject.position.set(this.width + item.offSetX, this.height + item.offSetY);
+                    JPixi.Helper.MakeRelativePosition(item.pixiObject, item.offSetX, item.offSetY)
                     break;
 
                 case ResizeTypes.PivotAtHalfSize:

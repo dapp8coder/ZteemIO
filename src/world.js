@@ -1,6 +1,7 @@
 const { JPixi } = require("./lib/jpixi");
 const { appConf } = require("./lib/jpixi_config");
 const { Camera } = require("./camera");
+const { GUI } = require("./gui");
 const SAT = require("sat");
 const { Grid } = require("./grid");
 const { BaseObject, BaseObjectColl, Prop } = require("./baseobject");
@@ -70,8 +71,9 @@ const LimitTypes = {
 
 class World {
     constructor() {
-        this.container = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, -appConf.cameraWidth / 2, -appConf.cameraHeight / 2);
+        this.container = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, -appConf.cameraWidth / 2, -appConf.cameraHeight / 2);
         this.camera = new Camera(this);
+        this.gui = new GUI(this);
         this.grid = new Grid(world.cellCount, this);
         this.collInfo = new SAT.Response();
         this.vA = new SAT.Vector();
@@ -80,12 +82,12 @@ class World {
         this.delta = 1;
         this.count = 0;
 
-        this.layerBottom = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, this.container);
-        this.layerBottomDecals = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, this.container);
-        this.layerMiddle = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, this.container);
-        this.layerPlayer = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, this.container);
-        this.layerTop = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, this.container);
-        this.layerTopDecals = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, this.container);
+        this.layerBottom = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, 0, 0, undefined, this.container);
+        this.layerBottomDecals = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, 0, 0, undefined, this.container);
+        this.layerMiddle = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, 0, 0, undefined, this.container);
+        this.layerPlayer = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, 0, 0, undefined, this.container);
+        this.layerTop = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, 0, 0, undefined, this.container);
+        this.layerTopDecals = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, 0, 0, undefined, this.container);
 
         this.container.setChildIndex(this.grid.container, 0);
         this.container.setChildIndex(this.layerBottom, 1);
