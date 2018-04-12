@@ -11,9 +11,12 @@ module.exports = {
     sc2Conf: {
         active: true,
         debug: true,
+        local: true,
+        domainLocal: "localhost",
         domainDebug: "dev.spelmakare.se",
         domainLive: "spelmakare.se",
         expires: 604800,
+        callBackURLLocal: "http://localhost:8000/index.html",
         callBackURLDebug: "http://dev.spelmakare.se/steem/zteemio",
         callBackURL: "https://spelmakare.se/steem/zteemio",
         scope: ["comment"]
