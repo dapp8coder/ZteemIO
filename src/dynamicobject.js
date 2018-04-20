@@ -237,8 +237,8 @@ class Player extends DynamicObject {
         this.friends = [];
 
         this.score = 0;
-        this.scoreText = JPixi.Text.CreateMessage("score", "Score: " + this.score, 0, 0, 0xFFFFFF, this.world.camera);
-
+        this.gameGUI = this.world.camera.gui.CreatesSlide();
+        this.scoreText = this.world.camera.gui.CreateTextInSlide("Score: " + this.score, this.gameGUI, 0, 0, 0xFFFFFF);
         this.isMunch = false;
         this.monsterKillCount = 0;
     }
@@ -312,9 +312,9 @@ class Player extends DynamicObject {
         this.world.layerTopDecals.removeChild(this.playerTarget.sprite);
         this.playerTarget = undefined;
 
-        this.world.camera.container.removeChild(this.scoreText);
+        this.world.camera.gui.RemoveObject(this.scoreText);
 
-        var gameOver = JPixi.Text.CreateMessage("death", "GAME OVER MAN, GAME OVER!\n SCORE: " + this.score + "\n\n\n\n\n\n Restarting in 10 seconds.", true, true, 0xFFFFFF, this.world.camera);
+        var gameOver = this.world.camera.gui.CreateTextInSlide("GAME OVER MAN, GAME OVER!\n SCORE: " + this.score + "\n\n\n\n\n\n Restarting in 10 seconds.", this.gameGUI, true, true, 0xFFFFFF, "center");
 
         this.inputDetection.alpha = 0;
         this.inputDetection.parent.removeChild(this.inputDetection);

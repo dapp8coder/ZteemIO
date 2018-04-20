@@ -18,7 +18,7 @@ class Grid {
      * @param {World} world
      */
     constructor(cellCount = 25, world) {
-        this.container = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, 0, 0, undefined, world.container);
+        this.container = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, 0, 0, world.container);
         this.world = world;
 
         /**@type {Cell[]} */

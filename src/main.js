@@ -1,25 +1,29 @@
-"use strict";
-
 const { JPixi, App } = require("./lib/jpixi");
 const { appConf } = require("./lib/jpixi_config");
 const { Player, Friend } = require("./dynamicobject");
-const { Camera, ResizeTypes } = require("./camera");
+const { ResizeTypes } = require("./config");
 const { World } = require("./world");
 const { StaticObject, StaticTiledObject } = require("./staticobject");
 const { Psy, Star, PUOutOfPhase, PURepel, PUFreeze, PUMunch } = require("./itemobject");
 const { Grid } = require("./grid");
 const { JSC2 } = require("./lib/jsc2");
 const { site } = require("./config");
+const { Sound } = require("pixi-sound");
+
+const musicTest = Sound.from({
+    url: site.audio + "music_theme.flac",
+    autoPlay: false,
+    volume: 0.1,
+    loop: true,
+    complete: function () {
+        console.log('Sound finished');
+    },
+});
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PIXI
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//Test
-/**type {PIXI.Sprite} */
-//var leaveFullScreen;
-/**type {PIXI.Sprite} */
-//var enterFullScreen;
 
 /**@type {World} */
 var world;
@@ -41,9 +45,10 @@ JPixi.Event.Init(() => {
 });
 
 JPixi.Event.Start(() => {
-    // Create world,camera & grid
+    // Create world, camera, gui & grid
     world = new World();
 
+    /// MAKE INITIAL GAME WORLD
     // World ends 32px wide colliders along edges of window.
     var up = new StaticTiledObject(site.img + "black1px.png", world, 0, -32, appConf.worldWidth, 32);
     up.alpha = 0;
@@ -77,43 +82,49 @@ JPixi.Event.Start(() => {
         var pumunch = new PUMunch(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
     }
 
-    // FPS
-    // var FPS = JPixi.Text.CreateFPS();
+    // GAME MENU
+    var mainMenu = world.camera.gui.CreatesSlide();
 
-    // START OF GAME
-    var mainMenu = true;
+    //Add button section for start game, settings and login on Steem.
 
-    var black = new JPixi.Sprite.CreateGui(site.img + "black1px.png", 0, 0, appConf.worldWidth, appConf.worldHeight, world.camera);
-    world.camera.AddToResizeList(black, ResizeTypes.FullSize);
+    var background = world.camera.gui.CreateSpriteInSlide(site.img + "black1px.png", mainMenu, ResizeTypes.FullSize, 0, 0, appConf.cameraWidth, appConf.cameraHeight);
+    var instruction = world.camera.gui.CreateTextInSlide("Click/Touch to begin.", mainMenu, true, -60, 0xFFFFFF);
+    var playerName = world.camera.gui.CreateTextInSlide("Name: Anonymous", mainMenu, true, 20, 0xFFFFFF);
 
-    black.Input(true, true, "pointerup", event => {
+    background.Input(true, true, "pointerup", event => {
         event.stopPropagation();
-
-        world.camera.container.removeChild(black);
-        world.camera.container.removeChild(instruction);
-        world.camera.container.removeChild(logoContainer);
-
-        mainMenu = false;
+        world.camera.gui.RemoveSlide(mainMenu);
+        mainMenu = undefined;
+        musicTest.stop();
     });
+
+    var logoContainer = world.camera.gui.CreateContainerInSlide(mainMenu, true, 125, 0, 0);
 
     var logoText = ["Z", "t", "e", "e", "m", ".", "i", "o"];
     /**@type {PIXI.Text[]} */
     var logoArray = [];
 
-    var logoContainer = new JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, true, 150, 0, 0, world.camera);
+    var posX = 0;
 
     for (var i = 0; i < logoText.length; i++) {
-        logoArray[i] = JPixi.Text.CreateMessage("logo", logoText[i], i * 50, 0, 0xFFFFFF, undefined, logoContainer);
-        logoArray[i].style.fontSize = 34;
+        logoArray[i] = world.camera.gui.CreateTextInSlideChild(logoText[i], logoContainer, i * posX, 0, 0xFFFFFF);
+        logoArray[i].style.fontSize = 50;
+        posX = 35;
     }
 
     var count = 0;
     var dir = 1;
+    var firstPass = true;
 
     function MainMenu(delta) {
         count++;
-        if (count == 25) {
-            count = -25;
+        if (firstPass && count == 60) {
+            count = -120;
+            dir = -1;
+            firstPass = false;
+        }
+        else if (count == 120) {
+            count = -120;
             dir = -1;
         }
         else if (count == -1) {
@@ -124,28 +135,30 @@ JPixi.Event.Start(() => {
         for (var i = 0; i < logoArray.length; i++) {
             logoArray[i].tint = 0xFFFFFF * Math.random();
 
-            if (i <= 2) logoArray[i].position.x += Math.random() * delta * dir;
-            else logoArray[i].position.x -= Math.random() * delta * dir;
-
-            if (logoArray[i].position.y <= appConf.cameraHeight / 2) logoArray[i].position.y += Math.random() * delta * dir * -1;
-            else logoArray[i].position.y -= Math.random() * delta * dir * -1;
+            logoArray[i].position.x += 1 * delta * dir;
+            logoArray[i].position.y += Math.sin(Math.abs(count / 10)) * delta * dir;
         }
     }
 
-    var instruction = JPixi.Text.CreateMessage("logo", "Click/Touch to begin.", true, -60, 0xFFFFFF, world.camera);
-    var playerName = JPixi.Text.CreateMessage("playerName", "Name: Anonymous", true, 20, 0xFFFFFF, world.camera);
+    /// STEEM CONNECT
+    // On load check if logged in, if so indicate this and set login to logout.
 
-    var jSC2 = new JSC2();
+    /* var jSC2 = new JSC2();
+     
+     jSC2.GetProfile(profile => {
+         playerName.text = "Name: " + profile.user;
+     });*/
 
-    jSC2.GetProfile(profile => {
-        playerName.text = "Name: " + profile.user;
-    });
 
-    // Begin game 
+    /// DEBUG
+    // var FPS = JPixi.Text.CreateFPS();
+
+
+    /// BEGIN GAME
     App.AddTicker(delta => {
         //FPS();
 
-        if (!mainMenu) world.Update(delta);
+        if (mainMenu == undefined) world.Update(delta);
         else MainMenu(delta);
     });
 
@@ -153,14 +166,7 @@ JPixi.Event.Start(() => {
 });
 
 JPixi.Event.FullScreen(() => {
-    if (leaveFullScreen.visible) {
-        leaveFullScreen.visible = false;
-        enterFullScreen.visible = true;
-    }
-    else {
-        leaveFullScreen.visible = true;
-        enterFullScreen.visible = false;
-    }
+
 });
 
 JPixi.Event.Resize(() => {

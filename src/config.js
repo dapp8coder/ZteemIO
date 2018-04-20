@@ -1,17 +1,14 @@
-"use strict";
-
 module.exports = {
     site: {
         name: "zteemio",
         root: "zteemio_files/",
         lib: "zteemio_files/lib/",
-        img: "zteemio_files/images/"
+        img: "zteemio_files/images/",
+        audio: "zteemio_files/audio/"
     },
 
     sc2Conf: {
         active: true,
-        debug: true,
-        local: true,
         domainLocal: "localhost",
         domainDebug: "dev.spelmakare.se",
         domainLive: "spelmakare.se",
@@ -50,5 +47,12 @@ module.exports = {
     // World
     world: {
         cellCount: 64 // How many cells to use for grid.
+    },
+
+    ResizeTypes: {
+        FullSize: 0,
+        Position: 1,
+        PivotAtHalfSize: 2,
+        Collider: 3
     }
 }

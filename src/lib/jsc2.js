@@ -13,13 +13,13 @@ class JSC2 {
         this.callBackURL = sc2Conf.callBackURL;
         this.secure = true;
 
-        if (sc2Conf.debug) {
+        if (window.location.href.includes("dev.spelmakare.se")) {
             this.domain = sc2Conf.domainDebug;
             this.callBackURL = sc2Conf.callBackURLDebug;
             this.secure = false;
         }
 
-        if (sc2Conf.local) {
+        if (window.location.href.includes("localhost")) {
             this.domain = sc2Conf.domainLocal;
             this.callBackURL = sc2Conf.callBackURLLocal;
             this.secure = false;

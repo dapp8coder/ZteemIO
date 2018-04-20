@@ -1,10 +1,11 @@
 const { JPixi } = require("./lib/jpixi");
 const { appConf } = require("./lib/jpixi_config");
 const { World } = require("./world");
+const { GUI } = require("./gui");
 const { DynamicObject } = require("./dynamicobject")
 const { BaseObject } = require("./baseobject")
 const { Prop } = require("./baseobject")
-const { site } = require("./config")
+const { site, ResizeTypes } = require("./config")
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,6 +26,9 @@ class Camera {
         JPixi.Container.Sort(this.world.container, 0); // Make sure world is below camera and gui.
 
         this.container = JPixi.Container.Create(appConf.cameraWidth, appConf.cameraHeight);
+
+        //GUI
+        this.gui = new GUI(this);
 
         //Culling box
         this.sprite = JPixi.Sprite.Create(site.img + "black1px.png", 0, 0, appConf.cameraWidth, appConf.cameraHeight, this.container);
@@ -118,12 +122,16 @@ class Camera {
                 case ResizeTypes.FullSize:
                     item.pixiObject.width = this.width;
                     item.pixiObject.height = this.height;
-                    this.lastPosX = -1;
-                    this.lastPosY = -1;
+
+                    // Force update of camera and cullbox
+                    if (item.pixiObject == this.sprite) {
+                        this.lastPosX = -1;
+                        this.lastPosY = -1;
+                    }
                     break;
 
                 case ResizeTypes.Position:
-                    JPixi.Helper.MakeRelativePosition(item.pixiObject, item.offSetX, item.offSetY)
+                    this.gui.MakeRelativePosition(item.pixiObject, item.offSetX, item.offSetY);
                     break;
 
                 case ResizeTypes.PivotAtHalfSize:
@@ -171,23 +179,10 @@ class Camera {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RESIZE ENUM
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const ResizeTypes = {
-    FullSize: 0,
-    Position: 1,
-    PivotAtHalfSize: 2,
-    Collider: 3
-}
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // MODULE EXPORT
 ///////////////////////////////////////////////////////////////////////////////
 
 module.exports = {
-    Camera,
-    ResizeTypes
+    Camera
 }

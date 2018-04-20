@@ -5,7 +5,7 @@
   "main": "zteemio",
   "dependencies": {
     "cookies-js": "^1.2.3",
-    "cross-fetch": "^2.1.0",
+    "pixi-sound": "^2.0.2",
     "pixi.js": "^4.7.3",
     "sat": "^0.7.0",
     "sc2-sdk": "^1.0.2"

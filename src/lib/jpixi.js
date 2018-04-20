@@ -1,8 +1,6 @@
-"use strict";
-
 const { appConf } = require("./jpixi_config");
 const PIXI = require("pixi.js");
-
+const { ResizeTypes } = require("../config");
 
 ///////////////////////////////////////////////////////////////////////////////
 // CONFIG
@@ -186,31 +184,18 @@ function BrowserIsFullScreen() {
 // CONTAINER
 ///////////////////////////////////////////////////////////////////////////////
 
-function ContainerCreate(width, height, posX = 0, posY = 0, pivotX = 0, pivotY = 0, camera = undefined, parentContainer = undefined) {
+function ContainerCreate(width, height, posX = 0, posY = 0, pivotX = 0, pivotY = 0, parentContainer = undefined) {
     var container = new PIXI.Container();
 
     container.width = width;
     container.height = height;
+    container.position.x = posX;
+    container.position.y = posY;
     container.pivot.x = pivotX;
     container.pivot.y = pivotY;
 
-    if (camera != undefined) {
-        MakeRelativePosition(container, posX, posY);
-
-        if (parentContainer == undefined) {
-            camera.container.addChild(container);
-            camera.AddToResizeList(container, 1, posX, posY);
-        }
-        else parentContainer.addChild(container);
-    }
-
-    else {
-        container.position.x = posX;
-        container.position.y = posY;
-
-        if (parentContainer == undefined) app.stage.addChild(container);
-        else parentContainer.addChild(container);
-    }
+    if (parentContainer == undefined) app.stage.addChild(container);
+    else parentContainer.addChild(container);
 
     return container;
 }
@@ -252,49 +237,6 @@ function TextCreateFPS(updateRate = 1000, container = undefined) {
     }
 }
 
-function MakeRelativePosition(pixiObject, posX, posY) {
-    if (posX === true) {
-        pixiObject.position.x = (appConf.cameraWidth / 2) - (pixiObject.width / 2);
-    }
-    else {
-        if (posX < 0) pixiObject.position.x = appConf.cameraWidth + posX - pixiObject.width;
-        else pixiObject.position.x = posX;
-    }
-
-    if (posY === true) {
-        pixiObject.position.y = (appConf.cameraHeight / 2) - (pixiObject.height / 2);
-    }
-    else {
-
-        if (posY < 0) pixiObject.position.y = appConf.cameraHeight + posY - pixiObject.height;
-        else pixiObject.position.y = posY;
-    }
-}
-
-/**
- * Show custom text, position relative to the camera.
- * 
- * @param {string} message
- * @param {Number| Boolean} posX If true center horizontal.
- * @param {Number | Boolean} posY If true center vertical.
- */
-function TextCreateMessage(name, message, posX, posY, color, camera, container = undefined) {
-    var msgText = new PIXI.Text("00", { fontFamily: "Courier", fontSize: 18, fill: color, align: "center", strokeThickness: 5 });
-    msgText.text = message;
-
-    MakeRelativePosition(msgText, posX, posY);
-
-    msgText.name = name;
-
-    if (container == undefined) {
-        camera.container.addChild(msgText);
-        camera.AddToResizeList(msgText, 1, posX, posY);
-    }
-    else container.addChild(msgText);
-
-    return msgText;
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // SPRITES
@@ -327,37 +269,6 @@ function SpriteCreateTiling(resourcePath, posX = 0, posY = 0, width, height, con
     if (container != undefined) container.addChild(tilingSprite);
 
     return tilingSprite;
-}
-
-/**
- * Gui is positioned relative to the camera (window/screen).
- * 
- * @param {String} resourcePath 
- * @param {Number | Boolean} posX 
- * @param {Number | Boolean} posY
- * @param {Number} width 
- * @param {Number} height
- * @param {Camera} camera 
- * @param {Container} container 
- * @param {Boolean} visibleOnOff 
- */
-function SpriteCreateGui(resourcePath, posX, posY, width = -1, height = -1, camera, container = undefined, visibleOnOff = true) {
-    var sprite = SpriteCreate(resourcePath);
-
-    MakeRelativePosition(sprite, posX, posY);
-
-    if (container == undefined) {
-        camera.container.addChild(sprite);
-        camera.AddToResizeList(sprite, 1, posX, posY);
-    }
-    else container.addChild(sprite);
-
-    if (width != -1) sprite.width = width;
-    if (height != -1) sprite.height = height;
-
-    sprite.visible = visibleOnOff;
-
-    return sprite;
 }
 
 function SpriteSort(sprite, container, index) {
@@ -395,7 +306,6 @@ module.exports = {
         Sprite: {
             Create: SpriteCreate,
             CreateTiling: SpriteCreateTiling,
-            CreateGui: SpriteCreateGui,
             Sort: SpriteSort
         },
         Container: {
@@ -403,11 +313,9 @@ module.exports = {
             Sort: ContainerSort
         },
         Text: {
-            CreateFPS: TextCreateFPS,
-            CreateMessage: TextCreateMessage
+            CreateFPS: TextCreateFPS
         },
         Helper: {
-            MakeRelativePosition,
             TriggerPixiEvent
         }
     },
