@@ -21,12 +21,14 @@ const musicTest = Sound.from({
 });
 
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// PIXI
+// GAME GLOBALS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**@type {World} */
 var world;
+var GameState;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,14 +43,124 @@ JPixi.Event.Init(() => {
         site.img + "white1px.png"
     ];
 
-    JPixi.Resources.AddArray(resList);
+    JPixi.Resources.AddArray(resList, true);
 });
 
 JPixi.Event.Start(() => {
     // Create world, camera, gui & grid
     world = new World();
 
-    /// MAKE INITIAL GAME WORLD
+    GameState = MakeGameMenu();
+
+    /// STEEM CONNECT
+    // On load check if logged in, if so indicate this and set login to logout.
+
+    /* var jSC2 = new JSC2();
+     
+     jSC2.GetProfile(profile => {
+         playerName.text = "Name: " + profile.user;
+     });*/
+
+
+    /// DEBUG
+    // var FPS = JPixi.Text.CreateFPS();
+
+    /// BEGIN GAME
+    App.AddTicker(delta => {
+        //FPS();
+
+        GameState(delta);
+    });
+
+    world.camera.ResizeList();
+});
+
+JPixi.Event.FullScreen(() => {
+
+});
+
+JPixi.Event.Resize(() => {
+
+});
+
+JPixi.Event.Orientation(() => {
+
+});
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// GAME MENU STATE
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function MakeGameMenu() {
+    var mainMenu = world.camera.gui.CreatesSlide();
+
+    var background = world.camera.gui.CreateSpriteInSlide(site.img + "black1px.png", mainMenu, ResizeTypes.FullSize, 0, 0, appConf.cameraWidth, appConf.cameraHeight);
+    var instruction = world.camera.gui.CreateTextInSlide("Click/Touch to begin.", mainMenu, true, -60, 0xFFFFFF);
+    var playerName = world.camera.gui.CreateTextInSlide("Name: Anonymous", mainMenu, true, 20, 0xFFFFFF);
+
+    background.Input(true, true, "pointerup", event => {
+        event.stopPropagation();
+        world.camera.gui.RemoveSlide(mainMenu);
+        musicTest.stop();
+        MakeGameWorld();
+        GameState = () => { world.Update(world.delta) };
+    });
+
+    // Create logo
+    var logoContainer = world.camera.gui.CreateContainerInSlide(mainMenu, true, 125, 0, 0);
+
+    var logoText = ["Z", "t", "e", "e", "m", ".", "i", "o"];
+    var logoArray = [];
+
+    var posX = 0;
+
+    for (var i = 0; i < logoText.length; i++) {
+        logoArray[i] = world.camera.gui.CreateTextInSlideChild(logoText[i], logoContainer, i * posX, 0, 0xFFFFFF);
+        logoArray[i].style.fontSize = 50;
+        posX = 35;
+    }
+
+    // Move logo back and forth.
+    var dir = 1;
+    return function MainMenu(delta) {
+
+        var count = 0;
+
+        for (var i = 0; i < logoArray.length; i++) {
+            count++;
+            logoArray[i].tint = 0xFFFFFF * Math.random();
+
+            logoArray[i].position.x += 1 * delta * dir;
+            logoArray[i].position.y += Math.sin(count) * delta * dir;
+        }
+
+        if (logoArray[0].position.x < -35) dir = 1;
+        if (logoArray[logoArray.length - 1].position.x > logoContainer.width) dir = -1;
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// GAME LEVEL STATE
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function MakeGameWorld(delta) {
+    // Create game GUI
+    var score = world.gameManager.SetValue("score", 0);
+
+    var gameGUI = world.camera.gui.CreatesSlide("gameGUI");
+    var scoreText = world.camera.gui.CreateTextInSlide("Score: " + score, gameGUI, 0, 0, 0xFFFFFF);
+
+    world.gameManager.On("UpdateScore", params => {
+        score = world.gameManager.SetValue("score", score + params[1]);
+        scoreText.text = "Score: " + score;
+    });
+
+    world.gameManager.On("GameOver", params => {
+        var gameOver = world.camera.gui.CreateTextInSlide("GAME OVER MAN, GAME OVER!\n SCORE: " + score + "\n\n\n\n\n\n Restarting in 10 seconds.", gameGUI, true, true, 0xFFFFFF, "center");
+    });
+
     // World ends 32px wide colliders along edges of window.
     var up = new StaticTiledObject(site.img + "black1px.png", world, 0, -32, appConf.worldWidth, 32);
     up.alpha = 0;
@@ -81,98 +193,4 @@ JPixi.Event.Start(() => {
     for (var i = 0; i < 5; i++) {
         var pumunch = new PUMunch(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
     }
-
-    // GAME MENU
-    var mainMenu = world.camera.gui.CreatesSlide();
-
-    //Add button section for start game, settings and login on Steem.
-
-    var background = world.camera.gui.CreateSpriteInSlide(site.img + "black1px.png", mainMenu, ResizeTypes.FullSize, 0, 0, appConf.cameraWidth, appConf.cameraHeight);
-    var instruction = world.camera.gui.CreateTextInSlide("Click/Touch to begin.", mainMenu, true, -60, 0xFFFFFF);
-    var playerName = world.camera.gui.CreateTextInSlide("Name: Anonymous", mainMenu, true, 20, 0xFFFFFF);
-
-    background.Input(true, true, "pointerup", event => {
-        event.stopPropagation();
-        world.camera.gui.RemoveSlide(mainMenu);
-        mainMenu = undefined;
-        musicTest.stop();
-    });
-
-    var logoContainer = world.camera.gui.CreateContainerInSlide(mainMenu, true, 125, 0, 0);
-
-    var logoText = ["Z", "t", "e", "e", "m", ".", "i", "o"];
-    /**@type {PIXI.Text[]} */
-    var logoArray = [];
-
-    var posX = 0;
-
-    for (var i = 0; i < logoText.length; i++) {
-        logoArray[i] = world.camera.gui.CreateTextInSlideChild(logoText[i], logoContainer, i * posX, 0, 0xFFFFFF);
-        logoArray[i].style.fontSize = 50;
-        posX = 35;
-    }
-
-    var count = 0;
-    var dir = 1;
-    var firstPass = true;
-
-    function MainMenu(delta) {
-        count++;
-        if (firstPass && count == 60) {
-            count = -120;
-            dir = -1;
-            firstPass = false;
-        }
-        else if (count == 120) {
-            count = -120;
-            dir = -1;
-        }
-        else if (count == -1) {
-            count = 1;
-            dir = 1;
-        }
-
-        for (var i = 0; i < logoArray.length; i++) {
-            logoArray[i].tint = 0xFFFFFF * Math.random();
-
-            logoArray[i].position.x += 1 * delta * dir;
-            logoArray[i].position.y += Math.sin(Math.abs(count / 10)) * delta * dir;
-        }
-    }
-
-    /// STEEM CONNECT
-    // On load check if logged in, if so indicate this and set login to logout.
-
-    /* var jSC2 = new JSC2();
-     
-     jSC2.GetProfile(profile => {
-         playerName.text = "Name: " + profile.user;
-     });*/
-
-
-    /// DEBUG
-    // var FPS = JPixi.Text.CreateFPS();
-
-
-    /// BEGIN GAME
-    App.AddTicker(delta => {
-        //FPS();
-
-        if (mainMenu == undefined) world.Update(delta);
-        else MainMenu(delta);
-    });
-
-    world.camera.ResizeList();
-});
-
-JPixi.Event.FullScreen(() => {
-
-});
-
-JPixi.Event.Resize(() => {
-
-});
-
-JPixi.Event.Orientation(() => {
-
-});
+}

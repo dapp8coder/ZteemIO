@@ -5,10 +5,10 @@ const SAT = require("sat");
 const { Grid } = require("./grid");
 const { BaseObject, BaseObjectColl, Prop } = require("./baseobject");
 const { world } = require("./config");
-
+const { GameManager } = require("./gamemanager");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// EASIER ACCESS TO PHYSICS POSITION
+// EASIER ACCESS TO COLLIDER POSITION
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -72,6 +72,7 @@ class World {
     constructor() {
         this.container = JPixi.Container.Create(appConf.worldWidth, appConf.worldHeight, 0, 0, -appConf.cameraWidth / 2, -appConf.cameraHeight / 2);
         this.camera = new Camera(this);
+        this.gameManager = new GameManager(this);
         this.grid = new Grid(world.cellCount, this);
         this.collInfo = new SAT.Response();
         this.vA = new SAT.Vector();
@@ -98,7 +99,7 @@ class World {
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // PHYSICS
+    // COLLIDERS
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**

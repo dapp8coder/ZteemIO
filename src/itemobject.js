@@ -68,7 +68,7 @@ class Star extends Item {
 
     CollisionPlayer(player) {
         this.Destroy();
-        player.UpdateScore(1);
+        this.world.gameManager.Trigger("UpdateScore", 1);
         player.AddFriend();
     }
 }
@@ -100,7 +100,7 @@ class PowerUp extends Item {
     }
 
     CollisionPlayer(player) {
-        player.UpdateScore(10);
+        this.world.gameManager.Trigger("UpdateScore", 10);
         this.Destroy();
     }
 }

@@ -1,6 +1,7 @@
 const { JPixi } = require("./lib/jpixi");
 const { appConf } = require("./lib/jpixi_config");
 const { ResizeTypes } = require("./config");
+const { Camera } = require("./camera");
 
 class GUI {
     /**
@@ -12,8 +13,10 @@ class GUI {
         this.container = JPixi.Container.Create(appConf.cameraWidth, appConf.cameraHeight, 0, 0, 0, 0, this.camera.container);
     }
 
-    CreatesSlide() {
+    CreatesSlide(name = "") {
         var newSlide = JPixi.Container.Create(appConf.cameraWidth, appConf.cameraHeight, 0, 0, 0, 0, this.container);
+        newSlide.name = name;
+
         return newSlide;
     }
 
@@ -23,6 +26,22 @@ class GUI {
      */
     RemoveSlide(slide) {
         this.container.removeChild(slide);
+    }
+
+    /**
+     * 
+     * @param {String} slideName
+     */
+    RemoveSlideByName(slideName) {
+        this.container.removeChild(this.container.getChildByName(slideName));
+    }
+
+    /**
+      * 
+      * @param {String} slideName
+      */
+    GetSlideByName(slideName) {
+        return this.container.getChildByName(slideName);
     }
 
     CreateSpriteInSlide(resourcePath, slide, resizeType, posX, posY, width = -1, height = -1, visibleOnOff = true) {
@@ -73,8 +92,11 @@ class GUI {
         return msgText;
     }
 
-    CreateContainerInSlide(slide, posX, posY, width, height, pivotX = 0, pivotY = 0) {
+    CreateContainerInSlide(slide, posX, posY, width = 0, height = 0, pivotX = 0, pivotY = 0) {
         var container = new PIXI.Container();
+
+        container.width = width;
+        container.height = height;
 
         this.MakeRelativePosition(container, posX, posY);
         this.camera.AddToResizeList(container, ResizeTypes.Position, posX, posY);

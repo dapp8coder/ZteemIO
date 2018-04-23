@@ -57,27 +57,30 @@ function Resize() {
 // LOAD ASSETS
 ///////////////////////////////////////////////////////////////////////////////
 
-function ResourcesAddArray(arrayResources) {
+function ResourcesAddArray(arrayResources, startGame = false, callBack = undefined) {
     PIXI.loader
         .add(arrayResources)
         .load(() => {
-            TriggerPixiEvent(appConf.eventStart); //TODO: SHOULD NOT TRIGGER START
+            if (startGame) TriggerPixiEvent(appConf.eventStart);
+            if (callBack != undefined) callBack();
         });
 }
 
-function ResourcesAddJSON(jsonResourcePath) {
+function ResourcesAddJSON(jsonResourcePath, startGame = false, callBack = undefined) {
     PIXI.loader
         .add(jsonResourcePath)
         .load(() => {
-            TriggerPixiEvent(appConf.eventStart);//TODO: SHOULD NOT TRIGGER START
+            if (startGame) TriggerPixiEvent(appConf.eventStart);
+            if (callBack != undefined) callBack();
         });
 }
 
-function ResourcesAdd(resourcePath) {
+function ResourcesAdd(resourcePath, startGame = false, callBack = undefined) {
     PIXI.loader
         .add(resourcePath)
         .load(() => {
-            TriggerPixiEvent(appConf.eventStart);//TODO: SHOULD NOT TRIGGER START
+            if (startGame) TriggerPixiEvent(appConf.eventStart);
+            if (callBack != undefined) callBack();
         });
 }
 

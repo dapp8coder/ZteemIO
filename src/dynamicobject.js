@@ -236,9 +236,6 @@ class Player extends DynamicObject {
 
         this.friends = [];
 
-        this.score = 0;
-        this.gameGUI = this.world.camera.gui.CreatesSlide();
-        this.scoreText = this.world.camera.gui.CreateTextInSlide("Score: " + this.score, this.gameGUI, 0, 0, 0xFFFFFF);
         this.isMunch = false;
         this.monsterKillCount = 0;
     }
@@ -258,11 +255,6 @@ class Player extends DynamicObject {
         this.playerTarget.prop.x = this.prop.x;
         this.playerTarget.prop.y = this.prop.y;
         this.playerTarget.sprite.position.set(this.prop.x, this.prop.y);
-    }
-
-    UpdateScore(increaseCount) {
-        this.score += increaseCount;
-        this.scoreText.text = "Score: " + this.score;
     }
 
 
@@ -312,16 +304,14 @@ class Player extends DynamicObject {
         this.world.layerTopDecals.removeChild(this.playerTarget.sprite);
         this.playerTarget = undefined;
 
-        this.world.camera.gui.RemoveObject(this.scoreText);
-
-        var gameOver = this.world.camera.gui.CreateTextInSlide("GAME OVER MAN, GAME OVER!\n SCORE: " + this.score + "\n\n\n\n\n\n Restarting in 10 seconds.", this.gameGUI, true, true, 0xFFFFFF, "center");
-
         this.inputDetection.alpha = 0;
         this.inputDetection.parent.removeChild(this.inputDetection);
         this.inputDetection.setParent(this.world.layerTop);
 
         for (var i = this.friends.length - 1; i > -1; i--)
             this.friends[i].InSuperNova();
+
+        this.world.gameManager.Trigger("GameOver");
 
         setInterval(() => {
             this.inputDetection.alpha += 0.00125;
@@ -488,7 +478,7 @@ class Friend extends AI {
         if (player.isMunch) {
             if (this.nr1 && this.sprite.alpha >= 0.8) {
                 player.monsterKillCount++;
-                player.UpdateScore(player.friends.length * 10 * player.monsterKillCount);
+                this.world.gameManager.Trigger("UpdateScore", player.friends.length * 10 * player.monsterKillCount);
 
                 for (var i = 0; i < player.friends.length; i++) {
                     player.friends[i].Destroy();
@@ -497,7 +487,7 @@ class Friend extends AI {
                 player.friends = [];
             }
             else if (this.sprite.alpha >= 0.2 && !this.nr1) {
-                player.UpdateScore(10);
+                this.world.gameManager.Trigger("UpdateScore", 10);
 
                 var index = -1;
 
