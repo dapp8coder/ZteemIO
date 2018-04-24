@@ -45,13 +45,19 @@ class DynamicObject extends BaseObjectColl {
         for (var i = 0; i < this.world.grid.cellCount; i++)
             this.cellsActive[i] = false;
 
-        this.timeOutList = [];
+        this.timeOutList = []; /// Stores setTimeouts for easy cleaning on destroy
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // TIMEOUT CALLBACKS, TRACK FOR CLEARING UPON DESTORY AND AVOID UNDEFINED.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /// Add a setTimeout(()=>{},Number});
     AddToTimeOutList(timeOut) {
         this.timeOutList.push(timeOut);
     }
 
+    /// Remove all timeouts pending
     ResetTimeOutList(doReset = true) {
         if (doReset) this.Reset();
 
@@ -65,6 +71,7 @@ class DynamicObject extends BaseObjectColl {
     Reset() {
 
     }
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // DESTROY
@@ -82,7 +89,6 @@ class DynamicObject extends BaseObjectColl {
 
         this.Publish("OnDestroyed");
         this.eventTopics = [];
-        this.timeOutList = [];
     }
 
 
@@ -145,7 +151,7 @@ class DynamicObject extends BaseObjectColl {
             this.world.grid.AddPlayerToCell(this);
         }
 
-        if (cell.FramesBetweenUpdates(ai.cellUpdateRate)) {
+        else if (cell.FramesBetweenUpdates(ai.cellUpdateRate)) {
             if (this.dynamicType === DynamicTypes.Foe) this.world.grid.AddFoeToCell(this);
             else this.world.grid.AddFriendToCell(this);
         }

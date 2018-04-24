@@ -53,7 +53,7 @@ JPixi.Event.Start(() => {
     GameState = MakeGameMenu();
 
     /// STEEM CONNECT
-    // On load check if logged in, if so indicate this and set login to logout.
+    // Check for cookie, if found login and only show logout.
 
     /* var jSC2 = new JSC2();
      
@@ -63,11 +63,11 @@ JPixi.Event.Start(() => {
 
 
     /// DEBUG
-    // var FPS = JPixi.Text.CreateFPS();
+    var FPS = JPixi.Text.CreateFPS();
 
     /// BEGIN GAME
     App.AddTicker(delta => {
-        //FPS();
+        FPS();
 
         GameState(delta);
     });
@@ -96,19 +96,47 @@ function MakeGameMenu() {
     var mainMenu = world.camera.gui.CreatesSlide();
 
     var background = world.camera.gui.CreateSpriteInSlide(site.img + "black1px.png", mainMenu, ResizeTypes.FullSize, 0, 0, appConf.cameraWidth, appConf.cameraHeight);
-    var instruction = world.camera.gui.CreateTextInSlide("Click/Touch to begin.", mainMenu, true, -60, 0xFFFFFF);
-    var playerName = world.camera.gui.CreateTextInSlide("Name: Anonymous", mainMenu, true, 20, 0xFFFFFF);
 
-    background.Input(true, true, "pointerup", event => {
-        event.stopPropagation();
-        world.camera.gui.RemoveSlide(mainMenu);
-        musicTest.stop();
-        MakeGameWorld();
-        GameState = () => { world.Update(world.delta) };
+    var buttonContainer = world.camera.gui.CreateContainerInSlide(mainMenu, true, -96, 0, 0);
+
+    var buttonLogin = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 0, 0, 96, 48);
+    var buttonLogout = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 0, 0, 96, 48);
+    var buttonStart = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 128, 0, 96, 48);
+    var buttonHighScores = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 256, 0, 96, 48);
+
+    buttonLogin.Input(true, true, "pointerup", event => {
+
     });
 
+    buttonLogout.Input(true, true, "pointerup", event => {
+
+    });
+
+    buttonStart.Input(true, true, "pointerup", event => {
+        event.stopPropagation();
+
+        world.camera.gui.RemoveSlide(mainMenu);
+        musicTest.stop();
+
+        MakeGameWorld();
+        GameState = () => { world.Update(world.delta); };
+    });
+
+    buttonHighScores.Input(true, true, "pointerup", event => {
+        event.stopPropagation();
+
+        var highscoresMenu = world.camera.gui.CreatesSlide();
+        var highscoresBackground = world.camera.gui.CreateSpriteInSlide(site.img + "white1px.png", highscoresMenu, ResizeTypes.Position, true, true, appConf.cameraWidth / 1.1, appConf.cameraHeight / 1.1);
+
+        highscoresBackground.Input(true, true, "pointerup", event => {
+            world.camera.gui.RemoveSlide(highscoresMenu);
+        });
+    });
+
+    // var playerName = world.camera.gui.CreateTextInSlide("Name: Anonymous", mainMenu, true, 20, 0xFFFFFF);
+
     // Create logo
-    var logoContainer = world.camera.gui.CreateContainerInSlide(mainMenu, true, 125, 0, 0);
+    var logoContainer = world.camera.gui.CreateContainerInSlide(mainMenu, true, 96, 0, 0);
 
     var logoText = ["Z", "t", "e", "e", "m", ".", "i", "o"];
     var logoArray = [];
@@ -145,12 +173,12 @@ function MakeGameMenu() {
 // GAME LEVEL STATE
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function MakeGameWorld(delta) {
+function MakeGameWorld() {
     // Create game GUI
     var score = world.gameManager.SetValue("score", 0);
 
     var gameGUI = world.camera.gui.CreatesSlide("gameGUI");
-    var scoreText = world.camera.gui.CreateTextInSlide("Score: " + score, gameGUI, 0, 0, 0xFFFFFF);
+    var scoreText = world.camera.gui.CreateTextInSlide("Score: " + score, gameGUI, 20, 0, 0xFFFFFF);
 
     world.gameManager.On("UpdateScore", params => {
         score = world.gameManager.SetValue("score", score + params[1]);
