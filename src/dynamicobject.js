@@ -30,6 +30,7 @@ class DynamicObject extends BaseObjectColl {
 
         this.collider.r = this.collider.r * 1.25;
         this.updateRate = 1;
+        this.directionUpdateRate = 1;
 
         this.firstPass = true;
         this.lastWorldCount = 0;
@@ -110,14 +111,12 @@ class DynamicObject extends BaseObjectColl {
 
         this.updateRate = cell.updateRate;
 
-        if (this.dynamicType === DynamicTypes.Player) {
-            this.target.UpdateDirectionAndDistance();
-        }
-        else if (cell.FramesBetweenUpdates(ai.directionUpdateRate)) {
+        if (cell.FramesBetweenUpdates(this.directionUpdateRate)) {
             this.target.UpdateDirectionAndDistance();
         }
 
         if (this.UpdateProp()) {
+            this.AvoidOutOfBounds();
             this.SyncSpriteAndColliderWithProp();
         }
 
@@ -155,6 +154,13 @@ class DynamicObject extends BaseObjectColl {
             if (this.dynamicType === DynamicTypes.Foe) this.world.grid.AddFoeToCell(this);
             else this.world.grid.AddFriendToCell(this);
         }
+    }
+
+    AvoidOutOfBounds(cell) {
+        if (this.prop.x > appConf.worldWidth - this.prop.width / 2) this.prop.x = appConf.worldWidth - this.prop.width / 2;
+        else if (this.prop.x < this.prop.width / 2) this.prop.x = this.prop.width / 2;
+        if (this.prop.y > appConf.worldHeight - this.prop.height / 2) this.prop.y = appConf.worldHeight - this.prop.height / 2;
+        else if (this.prop.y < this.prop.height / 2) this.prop.y = this.prop.height / 2;
     }
 
 
@@ -230,6 +236,8 @@ class Player extends DynamicObject {
         this.target.SetTarget(this.playerTarget);
 
         this.speed = 0;
+
+        this.directionUpdateRate = player.directionUpdateRate;
 
         /**@type {PIXI.Sprite} */
         this.inputDetection = new JPixi.Sprite.Create(site.img + "black1px.png", 0, 0, appConf.worldWidth, appConf.worldHeight, this.world.layerBottom, false);
@@ -415,6 +423,8 @@ class AI extends DynamicObject {
      */
     constructor(resourcePath, world, posX, posY, width, height) {
         super(resourcePath, world, posX, posY, width, height);
+
+        this.directionUpdateRate = ai.directionUpdateRate;
     }
 
     Destroy() {
@@ -447,7 +457,7 @@ class Friend extends AI {
         this.speed = ai.friend.speed;
 
         this.sprite.tint = 0xFFFFFF * Math.random();
-        this.sprite.alpha = 0.05;
+        this.sprite.alpha = 0.15;
 
         this.AddToTimeOutList(setTimeout(() => { this.sprite.alpha = 0.25; }, 500));
         this.AddToTimeOutList(setTimeout(() => { this.sprite.alpha = 0.5; this.sprite.tint = 0xFF0000 * Math.random(); }, 4000));
@@ -462,7 +472,7 @@ class Friend extends AI {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Update(cell) {
-        if (this.nr1 && this.target.distance < 20000 && this.sprite.alpha == 1) this.sprite.tint = 0xFF0000;
+        if (this.nr1 && this.target.distance < 40000 && this.sprite.alpha == 1) this.sprite.tint = 0xFF0000;
         else if (!this.gameOver && !this.target.reverse && this.speed > 0.8) this.sprite.tint = 0xFFFFFF * Math.random();
 
         if (this.target.reverse && !this.nr1) {

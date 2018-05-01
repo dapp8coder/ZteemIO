@@ -338,7 +338,7 @@ class Cell {
 
         // Every 12 frame, check if cell is within camera view. If outside, limit updates.
         if (this.FramesBetweenUpdates(12)) {
-            if (!this.world.CollideBoxBox(this.collider, this.world.camera.collider)) this.updateRate = 1;
+            if (!this.world.CollideBoxBox(this.collider, this.world.camera.collider)) this.updateRate = 6;
             else this.updateRate = 1;
         }
 

@@ -22,7 +22,7 @@ module.exports = {
     // DynamicObject AI
     ai: {
         cellUpdateRate: 2, // How often to check for cells object is in. 6 = ten times a sec at 60 frames.
-        directionUpdateRate: 2, // How often to run a check to see if object needs to be reset.
+        directionUpdateRate: 6, // How often to run a check to see if object needs to be reset.
         interactUpdateRate: 2, // How often to check if colliding with another dynamic object.
         speed: 0.3,   // Default speed of AI objects
         friend: {
@@ -33,6 +33,7 @@ module.exports = {
     // DynamicObject Player
     player: {
         cellUpdateRate: 2,  // How often to check for cells player is in. 1 = every frame, 2 = every other etc
+        directionUpdateRate: 3,
         speed: 1  // Default movement speed. direction * speed * updaterate * delta
     },
 

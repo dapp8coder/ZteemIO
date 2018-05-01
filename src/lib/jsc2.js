@@ -1,7 +1,7 @@
 const { site, sc2Conf } = require("../config");
 const { GetURLParameter } = require("./jhelper");
 const Cookies = require("cookies-js");
-
+const { DOMSanitize } = require("./jvalidate");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // STEEM CONNECT
@@ -12,14 +12,16 @@ class JSC2 {
         this.domain = sc2Conf.domainLive;
         this.callBackURL = sc2Conf.callBackURL;
         this.secure = true;
+        this.accessToken = "";
+        this.profile;
 
-        if (window.location.href.includes("dev.spelmakare.se")) {
+        if (window.location.href.includes(sc2Conf.domainDebug)) {
             this.domain = sc2Conf.domainDebug;
             this.callBackURL = sc2Conf.callBackURLDebug;
             this.secure = false;
         }
 
-        if (window.location.href.includes("localhost")) {
+        if (window.location.href.includes(sc2Conf.domainLocal)) {
             this.domain = sc2Conf.domainLocal;
             this.callBackURL = sc2Conf.callBackURLLocal;
             this.secure = false;
@@ -33,18 +35,8 @@ class JSC2 {
             secure: this.secure
         };
 
-        /// Get/Set Cookie
-        this.accessToken = Cookies.get("accessToken");
-
-        var urlHasToken = false;
-
-        if (this.accessToken == undefined) {
-            this.accessToken = GetURLParameter("access_token");
-            urlHasToken = true;
-        }
-
-        if (this.accessToken != undefined) Cookies.set("accessToken", this.accessToken);
-        else this.accessToken = "";
+        this.CheckCookieForToken();
+        this.CheckURLForToken();
 
         /// Init steemconnect
         this.sc2 = require("sc2-sdk").Initialize({
@@ -54,16 +46,45 @@ class JSC2 {
             scope: sc2Conf.scope
         });
 
-        /// Redirect to steemconnect login if no current accessToken found
-        if (this.accessToken === "") window.location = this.sc2.getLoginURL("");
 
-        this.profile;
-
-        // Remove accessToken etc from url in browser location
-        if (this.accessToken != "" && urlHasToken) {
-            window.history.pushState(this.callBackURL, "Zteem.io", this.callBackURL);
-        }
     }
+
+    CheckCookieForToken() {
+        this.accessToken = DOMSanitize(Cookies.get("accessToken"));
+
+        // if (this.accessToken == "") return false;
+        // else if (this.sc2.) console.log("x" + this.accessToken);
+        //  else return true;
+        //check if set
+        //check if valid
+
+        //return true/false
+    }
+
+    CheckURLForToken() {
+        if (this.accessToken == "") {
+            this.accessToken = DOMSanitize(GetURLParameter("access_token"));
+
+            // Remove
+            if (this.accessToken != "") {
+                window.history.pushState(this.callBackURL, "Zteem.io", this.callBackURL);
+            }
+        }
+
+        //check if set
+        //check if valid
+
+        //return true/false
+    }
+
+    StoreTokenInCookie() {
+        if (this.accessToken != "") Cookies.set("accessToken", DOMSanitize(this.accessToken));
+    }
+
+    RedirectToSC2() {
+        if (this.accessToken == "") window.location = this.sc2.getLoginURL("");
+    }
+
 
     GetProfile(callBack) {
         if (this.accessToken === "") return;

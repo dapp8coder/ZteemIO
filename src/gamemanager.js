@@ -24,6 +24,7 @@ class GameManager {
     }
 
     Trigger(callBackName) {
+        if (this.callBacks[callBackName] == undefined) return;
         this.callBacks[callBackName](arguments);
     }
 }

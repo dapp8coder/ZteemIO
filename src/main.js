@@ -55,8 +55,9 @@ JPixi.Event.Start(() => {
     /// STEEM CONNECT
     // Check for cookie, if found login and only show logout.
 
-    /* var jSC2 = new JSC2();
-     
+    var jSC2 = new JSC2();
+
+    /*
      jSC2.GetProfile(profile => {
          playerName.text = "Name: " + profile.user;
      });*/
@@ -100,7 +101,9 @@ function MakeGameMenu() {
     var buttonContainer = world.camera.gui.CreateContainerInSlide(mainMenu, true, -96, 0, 0);
 
     var buttonLogin = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 0, 0, 96, 48);
+    buttonLogin.tint = 0x00FF00;
     var buttonLogout = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 0, 0, 96, 48);
+    buttonLogout.tint = 0xFF0000;
     var buttonStart = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 128, 0, 96, 48);
     var buttonHighScores = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 256, 0, 96, 48);
 
@@ -188,16 +191,6 @@ function MakeGameWorld() {
     world.gameManager.On("GameOver", params => {
         var gameOver = world.camera.gui.CreateTextInSlide("GAME OVER MAN, GAME OVER!\n SCORE: " + score + "\n\n\n\n\n\n Restarting in 10 seconds.", gameGUI, true, true, 0xFFFFFF, "center");
     });
-
-    // World ends 32px wide colliders along edges of window.
-    var up = new StaticTiledObject(site.img + "black1px.png", world, 0, -32, appConf.worldWidth, 32);
-    up.alpha = 0;
-    var right = new StaticTiledObject(site.img + "black1px.png", world, appConf.worldWidth, 0, 32, appConf.worldHeight);
-    right.alpha = 0;
-    var down = new StaticTiledObject(site.img + "black1px.png", world, 0, appConf.worldHeight, appConf.worldWidth, 32);
-    down.alpha = 0;
-    var left = new StaticTiledObject(site.img + "black1px.png", world, -32, 0, 32, appConf.worldHeight);
-    left.alpha = 0;
 
     // Star
     for (var i = 0; i < 2000; i++) {
