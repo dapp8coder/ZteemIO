@@ -35,8 +35,9 @@ class JSC2 {
             secure: this.secure
         };
 
-        this.CheckCookieForToken();
-        this.CheckURLForToken();
+        if (!this.SetTokenFromCookie()) {
+            this.SetTokenFromURL();
+        }
 
         /// Init steemconnect
         this.sc2 = require("sc2-sdk").Initialize({
@@ -45,46 +46,48 @@ class JSC2 {
             accessToken: this.accessToken,
             scope: sc2Conf.scope
         });
-
-
     }
 
-    CheckCookieForToken() {
+    SetTokenFromCookie() {
         this.accessToken = DOMSanitize(Cookies.get("accessToken"));
 
-        // if (this.accessToken == "") return false;
-        // else if (this.sc2.) console.log("x" + this.accessToken);
-        //  else return true;
-        //check if set
-        //check if valid
+        if (this.accessToken == "") return false;
 
-        //return true/false
+        return true;
     }
 
-    CheckURLForToken() {
-        if (this.accessToken == "") {
-            this.accessToken = DOMSanitize(GetURLParameter("access_token"));
+    SetTokenFromURL() {
+        this.accessToken = DOMSanitize(GetURLParameter("access_token"));
 
-            // Remove
-            if (this.accessToken != "") {
-                window.history.pushState(this.callBackURL, "Zteem.io", this.callBackURL);
-            }
+        // Remove
+        if (this.accessToken != "") {
+            window.history.pushState(this.callBackURL, "Zteem.io", this.callBackURL);
+
+            this.StoreTokenInCookie();
+
+            return true;
         }
 
-        //check if set
-        //check if valid
-
-        //return true/false
+        return false;
     }
 
     StoreTokenInCookie() {
-        if (this.accessToken != "") Cookies.set("accessToken", DOMSanitize(this.accessToken));
+        Cookies.set("accessToken", DOMSanitize(this.accessToken));
+    }
+
+    RemoveCookie() {
+        Cookies.expire("accessToken");
     }
 
     RedirectToSC2() {
-        if (this.accessToken == "") window.location = this.sc2.getLoginURL("");
+        window.location = this.sc2.getLoginURL("");
     }
 
+    Logout() {
+        this.sc2.removeAccessToken();
+        this.RemoveCookie();
+        window.location = "";
+    }
 
     GetProfile(callBack) {
         if (this.accessToken === "") return;

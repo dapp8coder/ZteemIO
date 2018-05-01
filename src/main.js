@@ -21,7 +21,6 @@ const musicTest = Sound.from({
 });
 
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GAME GLOBALS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,6 +28,8 @@ const musicTest = Sound.from({
 /**@type {World} */
 var world;
 var GameState;
+/**@type {JSC2} */
+var jSC2;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,21 +48,9 @@ JPixi.Event.Init(() => {
 });
 
 JPixi.Event.Start(() => {
-    // Create world, camera, gui & grid
-    world = new World();
-
-    GameState = MakeGameMenu();
-
-    /// STEEM CONNECT
-    // Check for cookie, if found login and only show logout.
-
-    var jSC2 = new JSC2();
-
-    /*
-     jSC2.GetProfile(profile => {
-         playerName.text = "Name: " + profile.user;
-     });*/
-
+    world = new World();        // Create world, camera, gui & grid
+    jSC2 = new JSC2();          // Create SteemConnect2 login
+    GameState = MakeGameMenu(); // Create main menu.
 
     /// DEBUG
     var FPS = JPixi.Text.CreateFPS();
@@ -107,13 +96,27 @@ function MakeGameMenu() {
     var buttonStart = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 128, 0, 96, 48);
     var buttonHighScores = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 256, 0, 96, 48);
 
-    buttonLogin.Input(true, true, "pointerup", event => {
+    var testText = world.camera.gui.CreateTextInSlideChild("LOGIN", buttonContainer, 26, 14, 0xFFFFFF, 13);
+    var testText2 = world.camera.gui.CreateTextInSlideChild("LOGOUT", buttonContainer, 22, 14, 0xFFFFFF, 13);
+    var testText3 = world.camera.gui.CreateTextInSlideChild("START GAME", buttonContainer, 128 + 5, 14, 0xFFFFFF, 13);
+    var testText4 = world.camera.gui.CreateTextInSlideChild("HIGH SCORES", buttonContainer, 256 + 2, 14, 0xFFFFFF, 13);
 
+    buttonLogin.Input(true, true, "pointerup", event => {
+        jSC2.RedirectToSC2();
     });
 
     buttonLogout.Input(true, true, "pointerup", event => {
-
+        jSC2.Logout();
     });
+
+    if (jSC2.accessToken != "") {
+        buttonLogin.visible = false;
+        testText.visible = false;
+    }
+    else {
+        buttonLogout.visible = false;
+        testText2.visible = false;
+    }
 
     buttonStart.Input(true, true, "pointerup", event => {
         event.stopPropagation();
@@ -136,7 +139,11 @@ function MakeGameMenu() {
         });
     });
 
-    // var playerName = world.camera.gui.CreateTextInSlide("Name: Anonymous", mainMenu, true, 20, 0xFFFFFF);
+    var playerName = world.camera.gui.CreateTextInSlide("Name: Anonymous", mainMenu, true, 20, 0xFFFFFF);
+
+    jSC2.GetProfile(profile => {
+        playerName.text = "Name: " + profile.user;
+    });
 
     // Create logo
     var logoContainer = world.camera.gui.CreateContainerInSlide(mainMenu, true, 96, 0, 0);
