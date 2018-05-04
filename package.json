@@ -6,6 +6,7 @@
   "dependencies": {
     "cookies-js": "^1.2.3",
     "dompurify": "^1.0.3",
+    "dsteem": "^0.8.7",
     "pixi-sound": "^2.0.2",
     "pixi.js": "^4.7.3",
     "sat": "^0.7.0",

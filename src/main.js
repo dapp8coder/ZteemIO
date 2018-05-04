@@ -132,10 +132,39 @@ function MakeGameMenu() {
         event.stopPropagation();
 
         var highscoresMenu = world.camera.gui.CreatesSlide();
-        var highscoresBackground = world.camera.gui.CreateSpriteInSlide(site.img + "white1px.png", highscoresMenu, ResizeTypes.Position, true, true, appConf.cameraWidth / 1.1, appConf.cameraHeight / 1.1);
+        var highscoresBackground = world.camera.gui.CreateSpriteInSlide(site.img + "black1px.png", highscoresMenu, ResizeTypes.FullSize, 0, 0, appConf.cameraWidth, appConf.cameraHeight);
+        highscoresBackground.alpha = 0.5;
 
         highscoresBackground.Input(true, true, "pointerup", event => {
             world.camera.gui.RemoveSlide(highscoresMenu);
+        });
+
+        //jSC2.PostHighScore();
+
+        jSC2.GetHighScores(highScores => {
+            var highScoreContainer = world.camera.gui.CreateContainerInSlide(highscoresMenu, true, 50, 0, 0);
+
+            world.camera.gui.CreateTextInSlideChild("Pos", highScoreContainer, 0, 60);
+            world.camera.gui.CreateTextInSlideChild("User", highScoreContainer, 80, 60);
+            world.camera.gui.CreateTextInSlideChild("Score", highScoreContainer, 160, 60);
+            world.camera.gui.CreateTextInSlideChild("Date", highScoreContainer, 280, 60);
+
+            var heightPos = 80;
+
+            for (var i = 0; i < highScores.length; i++) {
+                var highScore = highScores[i];
+
+                world.camera.gui.CreateTextInSlideChild((i + 1), highScoreContainer, 0, heightPos);
+                world.camera.gui.CreateTextInSlideChild(highScore[1], highScoreContainer, 80, heightPos);
+                world.camera.gui.CreateTextInSlideChild(highScore[0], highScoreContainer, 160, heightPos);
+                world.camera.gui.CreateTextInSlideChild(highScore[2], highScoreContainer, 280, heightPos);
+
+                heightPos += 20;
+            }
+
+            world.camera.gui.CreateTextInSlideChild("TOP TEN HIGH SCORES", highScoreContainer, highScoreContainer.width / 4 - 10, 20);
+
+            world.camera.ResizeList();
         });
     });
 
