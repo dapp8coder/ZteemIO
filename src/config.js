@@ -19,6 +19,11 @@ module.exports = {
         scope: ["comment"]
     },
 
+    steemScore: {
+        version: 0.1,
+        hsversion: 2,
+    },
+
     // DynamicObject AI
     ai: {
         cellUpdateRate: 2, // How often to check for cells object is in. 6 = ten times a sec at 60 frames.

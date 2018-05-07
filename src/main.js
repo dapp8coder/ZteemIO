@@ -22,6 +22,19 @@ const musicTest = Sound.from({
     },
 });
 
+/**
+ * TODO
+ * Smaller version and hs version in posts.
+ * 
+ * deal with failing to post.
+ * 
+ * Cleanup
+ * comment
+ * Specific tags for top 1 and top 2 to 3
+ * fix reset bug that causes death on powerup over
+ * nicer blog posts.
+ * 
+ */
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GAME GLOBALS
@@ -276,23 +289,33 @@ function MakeGameWorld() {
 
             steemScore.SetPlayerHighScorePos(score);
 
+            var buttonReloadPosX = 128;
             var scoreMessage;
             var testTextSave;
             var buttonPostHighScore = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", gameOverContainer, ResizeTypes.Position, 0, 60, 96, 48);
             buttonPostHighScore.tint = 0x00FF00;
 
-            if (steemScore.playerPos != -1) {
+            if (steemScore.playerPos != -1 && jSC2.accessToken != "") {
                 scoreMessage = world.camera.gui.CreateTextInSlide("Your score is position " + steemScore.playerPos + " on\nthe high score list!", gameGUI, true, 180, 0xFFFFFF, 18, "Courier", "center");
                 testTextSave = world.camera.gui.CreateTextInSlideChild("POST\nHIGH SCORE", gameOverContainer, 0 + 7, 66, 0xFFFFFF, 13, "Courier", "center");
-            } else {
+            } else if (jSC2.accessToken != "") {
                 scoreMessage = world.camera.gui.CreateTextInSlide("Your did not get on the high score list.\nMake a blog post with your score!", gameGUI, true, 180, 0xFFFFFF, 18, "Courier", "center");
                 testTextSave = world.camera.gui.CreateTextInSlideChild("MAKE\nBLOG POST", gameOverContainer, 0 + 9, 66, 0xFFFFFF, 13, "Courier", "center");
             }
+            else {
+                gameOverContainer.removeChild(buttonPostHighScore);
+                buttonReloadPosX = 0;
+            }
 
-            var buttonReload = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", gameOverContainer, ResizeTypes.Position, 128, 60, 96, 48);
-            var testTextReload = world.camera.gui.CreateTextInSlideChild("MAIN MENU", gameOverContainer, 128 + 11, 74, 0xFFFFFF, 13);
+            var buttonReload = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", gameOverContainer, ResizeTypes.Position, buttonReloadPosX, 60, 96, 48);
+            var testTextReload = world.camera.gui.CreateTextInSlideChild("MAIN MENU", gameOverContainer, buttonReloadPosX + 11, 74, 0xFFFFFF, 13);
 
             buttonPostHighScore.Input(true, true, "pointerup", event => {
+                buttonPostHighScore.visible = false;
+                testTextSave.visible = false;
+                buttonReload.visible = false;
+                testTextReload.visible = false;
+
                 gameGUI.removeChild(scoreMessage);
                 scoreMessage = world.camera.gui.CreateTextInSlide("Posting score...", gameGUI, true, 180, 0xFFFFFF, 18, "Courier", "center");
 
@@ -306,6 +329,9 @@ function MakeGameWorld() {
 
                     if (steemScore.playerPos != -1) scoreMessage = world.camera.gui.CreateTextInSlide("High score list updated and your score posted.", gameGUI, true, 180, 0xFFFFFF, 18, "Courier", "center");
                     else scoreMessage = world.camera.gui.CreateTextInSlide("Your score has been posted.", gameGUI, true, 180, 0xFFFFFF, 18, "Courier", "center");
+
+                    buttonReload.visible = true;
+                    testTextReload.visible = true;
                 });
             });
 
