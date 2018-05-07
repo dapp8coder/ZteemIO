@@ -241,7 +241,7 @@ class Player extends DynamicObject {
 
         /**@type {PIXI.Sprite} */
         this.inputDetection = new JPixi.Sprite.Create(site.img + "black1px.png", 0, 0, appConf.worldWidth, appConf.worldHeight, this.world.layerBottom, false);
-        // this.inputDetection.alpha = 0;
+        this.inputDetection.alpha = 0;
         this.inputDetection.interactive = true;
         this.inputDetection.on("pointerdown", event => { event.stopPropagation(); this.OnPointerDown(event); });
         this.inputDetection.on("pointerup", event => { event.stopPropagation(); this.OnPointerUp(event); });
@@ -318,22 +318,10 @@ class Player extends DynamicObject {
         this.world.layerTopDecals.removeChild(this.playerTarget.sprite);
         this.playerTarget = undefined;
 
-        this.inputDetection.alpha = 0;
-        this.inputDetection.parent.removeChild(this.inputDetection);
-        this.inputDetection.setParent(this.world.layerTop);
-
         for (var i = this.friends.length - 1; i > -1; i--)
             this.friends[i].InSuperNova();
 
         this.world.gameManager.Trigger("GameOver");
-
-        setInterval(() => {
-            this.inputDetection.alpha += 0.00125;
-        }, 1);
-
-        setTimeout(() => {
-            location.reload();
-        }, 10000);
 
         super.Destroy();
     }

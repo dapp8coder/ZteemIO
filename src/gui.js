@@ -68,7 +68,7 @@ class GUI {
         return sprite;
     }
 
-    CreateTextInSlide(text, slide, posX, posY, color = 0xFFFFFF, hAlign = "left", size = 18, font = "Courier", visibleOnOff = true) {
+    CreateTextInSlide(text, slide, posX, posY, color = 0xFFFFFF, size = 18, font = "Courier", hAlign = "left", visibleOnOff = true) {
         var msgText = new PIXI.Text(text, { fontFamily: font, fontSize: size, fill: color, align: hAlign, strokeThickness: 5 });
 
         this.MakeRelativePosition(msgText, posX, posY);

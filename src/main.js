@@ -50,6 +50,7 @@ JPixi.Event.Init(() => {
 JPixi.Event.Start(() => {
     world = new World();        // Create world, camera, gui & grid
     jSC2 = new JSC2();          // Create SteemConnect2 login
+
     GameState = MakeGameMenu(); // Create main menu.
 
     /// DEBUG
@@ -84,11 +85,9 @@ JPixi.Event.Orientation(() => {
 
 function MakeGameMenu() {
     var mainMenu = world.camera.gui.CreatesSlide();
-
     var background = world.camera.gui.CreateSpriteInSlide(site.img + "black1px.png", mainMenu, ResizeTypes.FullSize, 0, 0, appConf.cameraWidth, appConf.cameraHeight);
 
     var buttonContainer = world.camera.gui.CreateContainerInSlide(mainMenu, true, -96, 0, 0);
-
     var buttonLogin = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 0, 0, 96, 48);
     buttonLogin.tint = 0x00FF00;
     var buttonLogout = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", buttonContainer, ResizeTypes.Position, 0, 0, 96, 48);
@@ -100,6 +99,17 @@ function MakeGameMenu() {
     var testText2 = world.camera.gui.CreateTextInSlideChild("LOGOUT", buttonContainer, 22, 14, 0xFFFFFF, 13);
     var testText3 = world.camera.gui.CreateTextInSlideChild("START GAME", buttonContainer, 128 + 5, 14, 0xFFFFFF, 13);
     var testText4 = world.camera.gui.CreateTextInSlideChild("HIGH SCORES", buttonContainer, 256 + 2, 14, 0xFFFFFF, 13);
+
+    if (jSC2.accessToken != "") {
+        var loginText = world.camera.gui.CreateTextInSlideChild("Fetching Steem profile.", buttonContainer, 0, 64, 0xFFFFFF, 12);
+
+        jSC2.GetProfile(profile => {
+            loginText.text = "Hello " + profile.user + "! Best of luck getting on the\nhigh score list.";
+        });
+
+    } else {
+        var loginText = world.camera.gui.CreateTextInSlideChild("Login, using SteemConnect, to be able to save and\npost your score to the Steem blockchain.", buttonContainer, 0, 64, 0xFFFFFF, 12);
+    }
 
     buttonLogin.Input(true, true, "pointerup", event => {
         jSC2.RedirectToSC2();
@@ -125,28 +135,31 @@ function MakeGameMenu() {
         musicTest.stop();
 
         MakeGameWorld();
-        GameState = () => { world.Update(world.delta); };
     });
 
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // High score list
     buttonHighScores.Input(true, true, "pointerup", event => {
         event.stopPropagation();
 
         var highscoresMenu = world.camera.gui.CreatesSlide();
         var highscoresBackground = world.camera.gui.CreateSpriteInSlide(site.img + "black1px.png", highscoresMenu, ResizeTypes.FullSize, 0, 0, appConf.cameraWidth, appConf.cameraHeight);
-        highscoresBackground.alpha = 0.5;
+        highscoresBackground.alpha = 0.8;
 
         highscoresBackground.Input(true, true, "pointerup", event => {
             world.camera.gui.RemoveSlide(highscoresMenu);
         });
 
-        //jSC2.PostHighScore();
+        var highScoreContainer = world.camera.gui.CreateContainerInSlide(highscoresMenu, true, 50, 0, 0);
+        var loadingText = world.camera.gui.CreateTextInSlideChild("Loading...", highScoreContainer, -50, 20);
 
         jSC2.GetHighScores(highScores => {
-            var highScoreContainer = world.camera.gui.CreateContainerInSlide(highscoresMenu, true, 50, 0, 0);
+            highScoreContainer.removeChild(loadingText);
 
             world.camera.gui.CreateTextInSlideChild("Pos", highScoreContainer, 0, 60);
-            world.camera.gui.CreateTextInSlideChild("User", highScoreContainer, 80, 60);
-            world.camera.gui.CreateTextInSlideChild("Score", highScoreContainer, 160, 60);
+            world.camera.gui.CreateTextInSlideChild("User", highScoreContainer, 60, 60);
+            world.camera.gui.CreateTextInSlideChild("Score", highScoreContainer, 170, 60);
             world.camera.gui.CreateTextInSlideChild("Date", highScoreContainer, 280, 60);
 
             var heightPos = 80;
@@ -155,8 +168,8 @@ function MakeGameMenu() {
                 var highScore = highScores[i];
 
                 world.camera.gui.CreateTextInSlideChild((i + 1), highScoreContainer, 0, heightPos);
-                world.camera.gui.CreateTextInSlideChild(highScore[1], highScoreContainer, 80, heightPos);
-                world.camera.gui.CreateTextInSlideChild(highScore[0], highScoreContainer, 160, heightPos);
+                world.camera.gui.CreateTextInSlideChild(highScore[1], highScoreContainer, 60, heightPos);
+                world.camera.gui.CreateTextInSlideChild(highScore[0], highScoreContainer, 170, heightPos);
                 world.camera.gui.CreateTextInSlideChild(highScore[2], highScoreContainer, 280, heightPos);
 
                 heightPos += 20;
@@ -168,12 +181,8 @@ function MakeGameMenu() {
         });
     });
 
-    var playerName = world.camera.gui.CreateTextInSlide("Name: Anonymous", mainMenu, true, 20, 0xFFFFFF);
 
-    jSC2.GetProfile(profile => {
-        playerName.text = "Name: " + profile.user;
-    });
-
+    //////////////////////////////////////////////////////////////////////////////////////
     // Create logo
     var logoContainer = world.camera.gui.CreateContainerInSlide(mainMenu, true, 96, 0, 0);
 
@@ -191,7 +200,6 @@ function MakeGameMenu() {
     // Move logo back and forth.
     var dir = 1;
     return function MainMenu(delta) {
-
         var count = 0;
 
         for (var i = 0; i < logoArray.length; i++) {
@@ -213,22 +221,7 @@ function MakeGameMenu() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function MakeGameWorld() {
-    // Create game GUI
-    var score = world.gameManager.SetValue("score", 0);
-
-    var gameGUI = world.camera.gui.CreatesSlide("gameGUI");
-    var scoreText = world.camera.gui.CreateTextInSlide("Score: " + score, gameGUI, 20, 0, 0xFFFFFF);
-
-    world.gameManager.On("UpdateScore", params => {
-        score = world.gameManager.SetValue("score", score + params[1]);
-        scoreText.text = "Score: " + score;
-    });
-
-    world.gameManager.On("GameOver", params => {
-        var gameOver = world.camera.gui.CreateTextInSlide("GAME OVER MAN, GAME OVER!\n SCORE: " + score + "\n\n\n\n\n\n Restarting in 10 seconds.", gameGUI, true, true, 0xFFFFFF, "center");
-    });
-
-    // Star
+    // Stars
     for (var i = 0; i < 2000; i++) {
         var star = new Star(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 8, 8, true);
     }
@@ -250,4 +243,69 @@ function MakeGameWorld() {
     for (var i = 0; i < 5; i++) {
         var pumunch = new PUMunch(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
     }
+
+    // Create game GUI
+    var score = world.gameManager.SetValue("score", 0);
+
+    var gameGUI = world.camera.gui.CreatesSlide("gameGUI");
+    var scoreText = world.camera.gui.CreateTextInSlide("Score: " + score, gameGUI, 20, 0, 0xFFFFFF);
+
+    // Score update
+    world.gameManager.On("UpdateScore", params => {
+        score = world.gameManager.SetValue("score", score + params[1]);
+        scoreText.text = "Score: " + score;
+    });
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Game over screen
+    world.gameManager.On("GameOver", params => {
+        var gameGUIBackground = world.camera.gui.CreateSpriteInSlide(site.img + "black1px.png", gameGUI, ResizeTypes.FullSize, 0, 0, appConf.cameraWidth, appConf.cameraHeight);
+        gameGUIBackground.alpha = 0;
+        gameGUI.setChildIndex(gameGUIBackground, 0);
+
+        var gameOverContainer = world.camera.gui.CreateContainerInSlide(gameGUI, true, true, 0, 0);
+        var gameOver = world.camera.gui.CreateTextInSlide("GAME OVER MAN, GAME OVER!\nSCORE: " + score, gameGUI, true, 120, 0xFFFFFF, 18, "Courier", "center");
+
+        var checkHS = world.camera.gui.CreateTextInSlide("Checking for position on the\nhigh score list...", gameGUI, true, 180, 0xFFFFFF, 18, "Courier", "center");
+
+        jSC2.GetHighScores(highScores => {
+            gameGUI.removeChild(checkHS);
+
+            var pos = jSC2.GetPlayerHighScorePos(highScores, score);
+
+            if (pos != -1) {
+                world.camera.gui.CreateTextInSlide("Your score is position " + pos + " on\nthe high score list!", gameGUI, true, 180, 0xFFFFFF, 18, "Courier", "center");
+
+                var buttonPostHighScore = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", gameOverContainer, ResizeTypes.Position, 0, 60, 96, 48);
+                var testTextSave = world.camera.gui.CreateTextInSlideChild("SAVE\nHIGH SCORE", gameOverContainer, 0 + 7, 66, 0xFFFFFF, 13, "Courier", "center");
+
+                var buttonReload = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", gameOverContainer, ResizeTypes.Position, 128, 60, 96, 48);
+                var testTextReload = world.camera.gui.CreateTextInSlideChild("MAIN MENU", gameOverContainer, 128 + 11, 74, 0xFFFFFF, 13);
+
+                buttonPostHighScore.Input(true, true, "pointerup", event => {
+                    jSC2.AddAndPostPlayerScore(score, () => {
+                        console.log("score posted!");
+                    });
+                });
+
+            } else {
+                world.camera.gui.CreateTextInSlide("Your score is not high enough for the\nhigh score list. Have another go!", gameGUI, true, 180, 0xFFFFFF, 18, "Courier", "center");
+
+                var buttonReload = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", gameOverContainer, ResizeTypes.Position, 0, 60, 96, 48);
+                var testTextReload = world.camera.gui.CreateTextInSlideChild("MAIN MENU", gameOverContainer, 0 + 11, 74, 0xFFFFFF, 13);
+            }
+
+            buttonReload.Input(true, true, "pointerup", event => {
+                window.location.reload();
+            });
+
+            world.camera.ResizeList();
+        });
+
+        setInterval(() => {
+            gameGUIBackground.alpha += 0.0025;
+        }, 1);
+    });
+
+    GameState = delta => { world.Update(delta); };
 }
