@@ -145,11 +145,7 @@ class SteemScore {
     }
 
     AppendHighScorePost() {
-        return `Try it yourself at <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a>. Created by @smjn.<br/>
-        <h3>About Zteem.io</h3>
-        <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a> is a game created specifically for the Steem blockchain. It runs on any platform that have a browser and mouse or touch input. The game 
-        relies <a href = "https://steemconnect.com/">SteemConnect</a> for safe usage of the Steem blockchain. See <a href = "https://spelmakare.se/steem/zteemio">game website</a> for details on how to play. tl;dr Click, hold and move.<br/>
-        <p style="font-size: 9px">Version: ${steemScore.version}, High Score Version: ${steemScore.hsversion}.</p>`;
+        return `<br/>Try it yourself at <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a>. Created by @smjn.<br/><h4>About Zteem.io</h4><a href="https://spelmakare.se/steem/zteemio">Zteem.io</a> is a game created specifically for the Steem blockchain. It runs on any platform that have a browser and mouse or touch input. The game relies on <a href = "https://steemconnect.com/">SteemConnect</a> for safe usage of the Steem blockchain. See <a href = "https://spelmakare.se/steem/zteemio">game website</a> for details on how to play. tl;dr Click, hold and move.<p style="font-size: 9px">Version: ${steemScore.version}, High Score Version: ${steemScore.hsversion}.</p>`;
     }
 
     PostHighScore(callBack) {

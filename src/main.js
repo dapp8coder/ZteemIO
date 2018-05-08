@@ -25,6 +25,8 @@ const musicTest = Sound.from({
 /**
  * TODO
  * 
+ * add instructions
+ * indicate game version and hsversion on game site.
  * deal with failing to post.
  * Cleanup
  * comment
