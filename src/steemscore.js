@@ -126,7 +126,7 @@ class SteemScore {
     }
 
     HighScoreMaker() {
-        var postString = `<br/><br/><center><b>TOP TEN HIGH SCORES</b><table>\
+        var postString = `<br/><center><img src="https://spelmakare.se/steem/zteemio_files/images/logo.png" alt="logo"/><br/><br/><br/><b>TOP TEN HIGH SCORES</b><table>\
            <tr><td width="50">Pos</td><td width="150">User</td><td width="100">Score</td><td width="100">Date</td></tr>`;
 
         for (var i = 0; i < this.list.length; i++) {
@@ -145,7 +145,7 @@ class SteemScore {
     }
 
     AppendHighScorePost() {
-        return `<br/>Try it yourself at <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a>. Created by @smjn.<br/><h4>About Zteem.io</h4><a href="https://spelmakare.se/steem/zteemio">Zteem.io</a> is a game created specifically for the Steem blockchain. It runs on any platform that have a browser and mouse or touch input. The game relies on <a href = "https://steemconnect.com/">SteemConnect</a> for safe usage of the Steem blockchain. See <a href = "https://spelmakare.se/steem/zteemio">game website</a> for details on how to play. tl;dr Click, hold and move.<p style="font-size: 9px">Version: ${steemScore.version}, High Score Version: ${steemScore.hsversion}.</p>`;
+        return `Try it yourself at <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a>. Created by @smjn.<br/><h4>About Zteem.io</h4><a href="https://spelmakare.se/steem/zteemio">Zteem.io</a> is a game created specifically for the Steem blockchain. It runs on any platform that have a browser and mouse or touch input. The game relies on <a href = "https://steemconnect.com/">SteemConnect</a> for safe usage of the Steem blockchain. See <a href = "https://spelmakare.se/steem/zteemio">game website</a> for details on how to play. tl;dr Click, hold and move.<br/><p style="font-size: 9px">Version: ${steemScore.version}, High Score Version: ${steemScore.hsversion}.</p>`;
     }
 
     PostHighScore(callBack) {

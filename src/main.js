@@ -26,6 +26,7 @@ const musicTest = Sound.from({
  * TODO
  * 
  * add instructions
+ * when opening game over menu, reset mouse as if player has not released mouse and does so over a button it will activate.
  * indicate game version and hsversion on game site.
  * deal with failing to post.
  * Cleanup
