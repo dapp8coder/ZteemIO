@@ -12,16 +12,16 @@ class SteemScore {
         //Default high scores
         /**@type {[]} */
         this.list = [
-            ["20000", "zteemio", "2018-05-07"],
-            ["18000", "zteemio", "2018-05-07"],
-            ["16000", "zteemio", "2018-05-07"],
+            ["15000", "zteemio", "2018-05-07"],
             ["14000", "zteemio", "2018-05-07"],
             ["12000", "zteemio", "2018-05-07"],
             ["10000", "zteemio", "2018-05-07"],
             ["8000", "zteemio", "2018-05-07"],
+            ["7000", "zteemio", "2018-05-07"],
             ["6000", "zteemio", "2018-05-07"],
             ["4000", "zteemio", "2018-05-07"],
-            ["2000", "zteemio", "2018-05-07"]
+            ["2000", "zteemio", "2018-05-07"],
+            ["1000", "zteemio", "2018-05-07"]
         ];
 
         this.playerScore = -1;
@@ -71,7 +71,7 @@ class SteemScore {
 
             if (score.match('[^0-9]')) return false;
             if (name.match('[^a-z0-9.-]')) return false;
-            if (date.match('[^0-9A-Z:.-]')) return false;
+            if (date.match('[^0-9T:-]')) return false;
         }
 
         return true;
@@ -92,10 +92,6 @@ class SteemScore {
                 break;
             }
         }
-
-        if (this.playerPos === -1 && this.list.length < 10) {
-            this.playerPos = this.list.length + 1;
-        }
     }
 
     AddAndPostPlayerScore(callBack) {
@@ -105,6 +101,7 @@ class SteemScore {
             if (this.playerPos != -1) {
                 var scoreDate = new Date().toISOString();
                 scoreDate = scoreDate.substr(0, scoreDate.length - 5);
+
                 var playerEntry = [this.playerScore.toString(), this.jsc2.profile.user, scoreDate];
 
                 if (this.playerPos === 1) {
@@ -129,7 +126,7 @@ class SteemScore {
     }
 
     HighScoreMaker() {
-        var postString = `<br/><center><b>TOP TEN HIGH SCORES</b><table>\
+        var postString = `<br/><br/><center><b>TOP TEN HIGH SCORES</b><table>\
            <tr><td width="50">Pos</td><td width="150">User</td><td width="100">Score</td><td width="100">Date</td></tr>`;
 
         for (var i = 0; i < this.list.length; i++) {
@@ -143,17 +140,19 @@ class SteemScore {
     }
 
     PrependHighScorePost() {
-        if (this.playerPos != -1) return `I played a round of <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a> and got a score of ${this.playerScore}. That put me at position <b>${this.playerPos}.</b> on the high score list!`;
-        else return `I played a round of <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a> and got a score of ${this.playerScore}. It wasn't enough to get on the high score list.`;
+        if (this.playerPos != -1) return `I scored ${this.playerScore} points when playing <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a>. Enough to get to position <b>${this.playerPos}</b> on the high score list!`;
+        else return `I played a round of <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a> and got a score of ${this.playerScore}. It wasn't enough to get on the high score list :(`;
     }
 
     AppendHighScorePost() {
-        return `Try it yourself at <a href = "https://spelmakare.se/steem/zteemio"> Zteem.io</a>. Created by @smjn. Current version: ${steemScore.version}, current high score version: ${steemScore.hsversion}.`;
+        return `Try it yourself at <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a>. Created by @smjn.<br/>
+        <h3>About Zteem.io</h3>
+        <a href="https://spelmakare.se/steem/zteemio">Zteem.io</a> is a game created specifically for the Steem blockchain. It runs on any platform that have a browser and mouse or touch input. The game 
+        relies <a href = "https://steemconnect.com/">SteemConnect</a> for safe usage of the Steem blockchain. See <a href = "https://spelmakare.se/steem/zteemio">game website</a> for details on how to play. tl;dr Click, hold and move.<br/>
+        <p style="font-size: 9px">Version: ${steemScore.version}, High Score Version: ${steemScore.hsversion}.</p>`;
     }
 
     PostHighScore(callBack) {
-        var user = this.jsc2.profile.user;
-
         var date;
         if (this.playerPos != -1) date = this.list[this.playerPos - 1][2];
         else {
@@ -163,11 +162,20 @@ class SteemScore {
         date = date.toLowerCase();
         date = date.replace(/:/g, "");
 
+        var topic;
+        if (this.playerPos != -1) topic = "[Zteem.io] Top Ten High Score!";
+        else topic = "[Zteem.io] My score, can you beat it?";
+
+        var tags;
+        if (this.playerPos === 1) tags = ["zteemio", "gaming", "games", "steemgc", "gamersunited"];
+        else if (this.playerPos != 1 && this.playerPos <= 3) tags = ["zteemio", "gaming", "games"];
+        else tags = ["zteemio", "gaming"];
+
+        var user = this.jsc2.profile.user;
         var link = "zteemio-" + user + "-" + date;
-        var topic = "Zteem.io High Score!";
         var body = this.PrependHighScorePost() + this.HighScoreMaker() + this.AppendHighScorePost();
         var metaData = {
-            "tags": ["zteemio"], /// ["zteemio", "gaming", "games", "steemgc", "gamersunited"]
+            "tags": tags,
             "app": "zteemio/" + steemScore.version,
             "zteemio": {
                 "version": steemScore.version,

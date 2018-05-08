@@ -24,15 +24,11 @@ const musicTest = Sound.from({
 
 /**
  * TODO
- * Smaller version and hs version in posts.
  * 
  * deal with failing to post.
- * 
  * Cleanup
  * comment
- * Specific tags for top 1 and top 2 to 3
  * fix reset bug that causes death on powerup over
- * nicer blog posts.
  * 
  */
 
