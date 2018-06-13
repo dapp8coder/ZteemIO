@@ -123,12 +123,36 @@ class World {
         return new SAT.Circle(new SAT.Vector(prop.x, prop.y), prop.width / 2);
     }
 
+    Collide(colliderA, colliderB) {
+        if (colliderA == undefined || colliderB == undefined) return false;
+
+        if (colliderA.r > 0 && colliderB.r > 0) return this.CollideCircleCircle(colliderA, colliderB);
+        else if (colliderA.r > 0  && colliderB.r == undefined) return this.CollideCircleBox(colliderA, colliderB);
+        else if (colliderA.r == undefined && colliderB.r > 0 ) return this.CollideBoxCircle(colliderA, colliderB);
+        else if (colliderA.r == undefined && colliderB.r == undefined) return this.CollideBoxBox(colliderA, colliderB);
+    }
+
     /**
      * 
      * @param {SAT.Polygon} colliderA
      * @param {SAT.Circle} colliderB
      */
     CollideBoxCircle(colliderA, colliderB) {
+        if (colliderA == undefined || colliderB == undefined) return false;
+
+        this.collInfo.clear();
+        var collision = SAT.testPolygonCircle(colliderA, colliderB, this.collInfo);
+
+        return collision;
+    }
+
+
+    /**
+     * 
+     * @param {SAT.Circle} colliderA
+     * @param {SAT.Polygon} colliderB
+     */
+    CollideCircleBox(colliderA, colliderB) {
         if (colliderA == undefined || colliderB == undefined) return false;
 
         this.collInfo.clear();

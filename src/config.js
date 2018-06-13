@@ -12,7 +12,7 @@ module.exports = {
         domainLocal: "localhost",
         domainDebug: "dev.spelmakare.se",
         domainLive: "spelmakare.se",
-        expires: 604800,
+        expires: 14400, // 4 hours
         callBackURLLocal: "http://localhost:8000/index.html",
         callBackURLDebug: "http://dev.spelmakare.se/steem/zteemio",
         callBackURL: "https://spelmakare.se/steem/zteemio",

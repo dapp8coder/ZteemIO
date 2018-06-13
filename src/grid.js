@@ -47,7 +47,7 @@ class Grid {
      */
     AddStaticToCell(objectToAdd) {
         this.cells.forEach(cell => {
-            if (this.world.CollideBoxBox(cell.collider, objectToAdd.collider)) cell.staticObjs.push(objectToAdd);
+            if (this.world.Collide(cell.collider, objectToAdd.collider)) cell.staticObjs.push(objectToAdd);
         });
     }
 
@@ -58,7 +58,7 @@ class Grid {
     */
     AddItemToCell(objectToAdd) {
         this.cells.forEach(cell => {
-            if (this.world.CollideBoxBox(cell.collider, objectToAdd.collider)) cell.items.push(objectToAdd);
+            if (this.world.Collide(cell.collider, objectToAdd.collider)) cell.items.push(objectToAdd);
         });
     }
 
@@ -106,7 +106,7 @@ class Grid {
             if (objectToAdd.cellsActive[i] === false) continue;
 
             cell = this.cells[i];
-            inCell = this.world.CollideBoxCircle(cell.collider, objectToAdd.collider);
+            inCell = this.world.Collide(cell.collider, objectToAdd.collider);
 
             // Object remains in cell.
             if (inCell) {
@@ -133,7 +133,7 @@ class Grid {
                 if (objectToAdd.cellsActive[index] === true) continue; //Don't re-check the previously known cells.
 
                 cell = this.cells[index];
-                inCell = this.world.CollideBoxCircle(cell.collider, objectToAdd.collider);
+                inCell = this.world.Collide(cell.collider, objectToAdd.collider);
 
                 if (inCell) {
                     foundObject = true;
@@ -160,7 +160,7 @@ class Grid {
                 if (objectToAdd.cellsActive[index] === true) continue; //Don't re-check the previously known cells.
 
                 cell = this.cells[i];
-                inCell = this.world.CollideBoxCircle(cell.collider, objectToAdd.collider);
+                inCell = this.world.Collide(cell.collider, objectToAdd.collider);
 
                 if (inCell) {
                     foundObject = true;
@@ -338,7 +338,7 @@ class Cell {
 
         // Every 12 frame, check if cell is within camera view. If outside, limit updates.
         if (this.FramesBetweenUpdates(12)) {
-            if (!this.world.CollideBoxBox(this.collider, this.world.camera.collider)) this.updateRate = 6;
+            if (!this.world.Collide(this.collider, this.world.camera.collider)) this.updateRate = 6;
             else this.updateRate = 1;
         }
 

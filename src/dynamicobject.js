@@ -23,12 +23,14 @@ class DynamicObject extends BaseObjectColl {
      * @param {Number} height height of sprite.
      * @param {World} world what world this object is in.
      */
-    constructor(resourcePath, world, posX, posY, width, height) {
-        super(world, posX, posY, width, height, ColliderTypes.Circle);
+    constructor(resourcePath, world, posX, posY, width, height, colliderType = ColliderTypes.Circle) {
+        super(world, posX, posY, width, height, colliderType);
 
-        this.sprite = JPixi.Sprite.Create(resourcePath, this.prop.x, this.prop.y, this.prop.width, this.prop.height, this.world.layerMiddle, true);
+        if (colliderType == ColliderTypes.BoxCentered || colliderType == ColliderTypes.Circle)
+            this.sprite = JPixi.Sprite.Create(resourcePath, this.prop.x, this.prop.y, this.prop.width, this.prop.height, this.world.layerMiddle, true);
+        else
+            this.sprite = JPixi.Sprite.Create(resourcePath, this.prop.x, this.prop.y, this.prop.width, this.prop.height, this.world.layerMiddle, false);
 
-        this.collider.r = this.collider.r * 1.25;
         this.updateRate = 1;
         this.directionUpdateRate = 1;
 
@@ -212,8 +214,8 @@ class Player extends DynamicObject {
      * @param {Number} width
      * @param {Number} height
      */
-    constructor(resourcePath, world, posX, posY, width, height) {
-        super(resourcePath, world, posX, posY, width, height);
+    constructor(resourcePath, world, posX, posY, width, height, colliderType = ColliderTypes.Circle) {
+        super(resourcePath, world, posX, posY, width, height, colliderType);
         this.world.grid.AddPlayerToCell(this);
         this.dynamicType = DynamicTypes.Player;
 
@@ -409,8 +411,8 @@ class AI extends DynamicObject {
      * @param {Number} width
      * @param {Number} height
      */
-    constructor(resourcePath, world, posX, posY, width, height) {
-        super(resourcePath, world, posX, posY, width, height);
+    constructor(resourcePath, world, posX, posY, width, height, colliderType = ColliderTypes.Circle) {
+        super(resourcePath, world, posX, posY, width, height, colliderType);
 
         this.directionUpdateRate = ai.directionUpdateRate;
     }
@@ -437,8 +439,8 @@ class Friend extends AI {
      * @param {Number} width
      * @param {Number} height
      */
-    constructor(resourcePath, world, posX, posY, width, height, nr1) {
-        super(resourcePath, world, posX, posY, width, height);
+    constructor(resourcePath, world, posX, posY, width, height, colliderType = ColliderTypes.Circle) {
+        super(resourcePath, world, posX, posY, width, height, colliderType);
         this.world.grid.AddFriendToCell(this);
         this.dynamicType = DynamicTypes.Friend;
 
@@ -470,7 +472,7 @@ class Friend extends AI {
 
         if (cell.FramesBetweenUpdates(ai.interactUpdateRate)) {
             var player = cell.player[0];
-            if (player != undefined && this.world.CollideCircleCircle(this.collider, player.collider)) this.CollisionPlayer(player);
+            if (player != undefined && this.world.Collide(this.collider, player.collider)) this.CollisionPlayer(player);
         }
 
         if (this.IsDestroyed()) return;

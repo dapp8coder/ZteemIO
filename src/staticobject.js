@@ -17,29 +17,31 @@ class StaticObject extends BaseObjectColl {
      * @param {Number} height height of sprite.
      * @param {World} world what world this object is in.
      */
-    constructor(resourcePath, world, posX, posY, width, height, centerAnchor = false) {
-        if (!centerAnchor) super(world, posX, posY, width, height, ColliderTypes.Box);
-        else super(world, posX, posY, width, height, ColliderTypes.BoxCentered);
+    constructor(resourcePath, world, posX, posY, width, height, colliderType = ColliderTypes.Box) {
+        super(world, posX, posY, width, height, colliderType);
         this.world.grid.AddStaticToCell(this);
 
-        this.sprite = JPixi.Sprite.Create(resourcePath, this.prop.x, this.prop.y, this.prop.width, this.prop.height, world.layerMiddle, centerAnchor);
+        if (colliderType == ColliderTypes.BoxCentered || colliderType == ColliderTypes.Circle)
+            this.sprite = JPixi.Sprite.Create(resourcePath, this.prop.x, this.prop.y, this.prop.width, this.prop.height, this.world.layerMiddle, true);
+        else
+            this.sprite = JPixi.Sprite.Create(resourcePath, this.prop.x, this.prop.y, this.prop.width, this.prop.height, this.world.layerMiddle, false);
     }
 
     Update(cell) {
         if (cell.FramesBetweenUpdates(staticObj.collisionUpdateRate)) {
             var player = cell.player[0];
-            if (player != undefined && this.world.CollideBoxCircle(this.collider, player.collider)) this.CollisionPlayer(player);
+            if (player != undefined && this.world.Collide(this.collider, player.collider)) this.CollisionPlayer(player);
 
             for (var i = cell.friends.length - 1; i > -1; i--) {
                 var friend = cell.friends[i];
 
-                if (this.world.CollideBoxCircle(this.collider, friend.collider)) this.CollisionFriend(friend);
+                if (this.world.Collide(this.collider, friend.collider)) this.CollisionFriend(friend);
             }
 
             for (var i = cell.foes.length - 1; i > -1; i--) {
                 var foe = cell.foes[i];
 
-                if (this.world.CollideBoxCircle(this.collider, foe.collider)) this.CollisionFoe(foe);
+                if (this.world.Collide(this.collider, foe.collider)) this.CollisionFoe(foe);
             }
         }
     }
@@ -82,11 +84,14 @@ class StaticTiledObject extends StaticObject {
      * @param {Number} height height of sprite.
      * @param {World} world what world this object is in.
      */
-    constructor(resourcePath, world, posX, posY, width, height, centerAnchor = false) {
-        super(resourcePath, world, posX, posY, width, height, centerAnchor);
-
+    constructor(resourcePath, world, posX, posY, width, height, colliderType = ColliderTypes.Box) {
+        super(resourcePath, world, posX, posY, width, height, colliderType);
         this.world.layerMiddle.removeChild(this.sprite);
-        this.sprite = JPixi.Sprite.CreateTiling(resourcePath, this.prop.x, this.prop.y, this.prop.width, this.prop.height, world.layerMiddle, centerAnchor);
+
+        if (colliderType == ColliderTypes.BoxCentered || colliderType == ColliderTypes.Circle)
+            this.sprite = JPixi.Sprite.CreateTiling(resourcePath, this.prop.x, this.prop.y, this.prop.width, this.prop.height, this.world.layerMiddle, true);
+        else
+            this.sprite = JPixi.Sprite.CreateTiling(resourcePath, this.prop.x, this.prop.y, this.prop.width, this.prop.height, this.world.layerMiddle, false);
     }
 }
 

@@ -32,7 +32,7 @@ const musicTest = Sound.from({
  * Cleanup
  * comment
  * fix reset bug that causes death on powerup over
- * 
+ * close high scores button
  */
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,14 +47,13 @@ var jSC2;
 /**@type {SteemScore} */
 var steemScore;
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PIXI EVENTS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 JPixi.Event.Init(() => {
     var resList = [
-        site.img + "zoomIn.png",
-        site.img + "zoomOut.png",
         site.img + "black1px.png",
         site.img + "white1px.png"
     ];
@@ -239,7 +238,7 @@ function MakeGameMenu() {
 function MakeGameWorld() {
     // Stars
     for (var i = 0; i < 2000; i++) {
-        var star = new Star(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 8, 8, true);
+        var star = new Star(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 8, 8);
     }
 
     // Player
@@ -248,16 +247,16 @@ function MakeGameWorld() {
 
     // Power ups
     for (var i = 0; i < 5; i++) {
-        var puoop = new PUOutOfPhase(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
+        var puoop = new PUOutOfPhase(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12);
     }
     for (var i = 0; i < 5; i++) {
-        var purepel = new PURepel(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
+        var purepel = new PURepel(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12);
     }
     for (var i = 0; i < 5; i++) {
-        var pufreeze = new PUFreeze(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
+        var pufreeze = new PUFreeze(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12);
     }
     for (var i = 0; i < 5; i++) {
-        var pumunch = new PUMunch(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12, true);
+        var pumunch = new PUMunch(site.img + "white1px.png", world, Math.random() * appConf.worldWidth, Math.random() * appConf.worldHeight, 12, 12);
     }
 
     // Create game GUI

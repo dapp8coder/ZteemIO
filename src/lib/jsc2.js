@@ -52,7 +52,7 @@ class JSC2 {
     }
 
     SetTokenFromCookie() {
-        this.accessToken = DOMSanitize(Cookies.get("accessToken"));
+        // this.accessToken = DOMSanitize(Cookies.get("accessToken")); //Disabled cookie 1/3
 
         if (this.accessToken == "") return false;
 
@@ -75,11 +75,11 @@ class JSC2 {
     }
 
     StoreTokenInCookie() {
-        Cookies.set("accessToken", DOMSanitize(this.accessToken));
+        //  Cookies.set("accessToken", DOMSanitize(this.accessToken));  //Disabled cookie 2/3
     }
 
     RemoveCookie() {
-        Cookies.expire("accessToken");
+        //  Cookies.expire("accessToken");  //Disabled cookie 3/3
     }
 
     RedirectToSC2() {
