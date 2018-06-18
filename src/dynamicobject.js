@@ -306,10 +306,8 @@ class Player extends DynamicObject {
         this.sprite.tint = 0x0000FF;
         this.isMunch = false;
 
-        if (!this.skipFriendReset) {
-            for (var i = this.friends.length - 1; i > -1; i--) {
-                this.friends[i].Reset();
-            }
+        for (var i = this.friends.length - 1; i > -1; i--) {
+            this.friends[i].Reset();
         }
 
         super.Reset();
@@ -335,8 +333,8 @@ class Player extends DynamicObject {
         if (index <= 0) {
             this.friends[index].target.SetTarget(this);
             this.friends[index].nr1 = true;
-            this.friends[index].prop.width += 8;
-            this.friends[index].prop.height += 8;
+            this.friends[index].prop.width += 12;
+            this.friends[index].prop.height += 12;
         }
         else {
             this.friends[index].target.SetTarget(this.friends[index - 1]);
@@ -344,9 +342,7 @@ class Player extends DynamicObject {
     }
 
     PUOutOfPhase() {
-        this.skipFriendReset = true;
         this.ResetTimeOutList();
-        this.skipFriendReset = false;
 
         this.sprite.alpha = 0.2;
         this.sprite.tint = 0xFF00FF;
@@ -363,7 +359,7 @@ class Player extends DynamicObject {
         this.ResetTimeOutList();
 
         for (var i = this.friends.length - 1; i > -1; i--) {
-            this.friends[i].Freeze();
+            this.friends[i].InFreeze();
         }
     }
 
@@ -378,8 +374,8 @@ class Player extends DynamicObject {
     PUMunch() {
         this.ResetTimeOutList();
 
-        this.sprite.alpha = 0.5;
-        this.sprite.tint = 0xFF0000;
+        this.sprite.alpha = 0.75;
+        this.sprite.tint = 0xAF1A4F;
         this.isMunch = true;
 
         for (var i = this.friends.length - 1; i > -1; i--) {
@@ -517,7 +513,8 @@ class Friend extends AI {
 
     Reset() {
         this.target.reverse = false;
-        this.sprite.alpha = 1;
+        this.AddToTimeOutList(setTimeout(() => { this.sprite.alpha = 0.8; }, 100));
+        this.AddToTimeOutList(setTimeout(() => { this.sprite.alpha = 1; }, 500));
         this.sprite.tint = 0xFFFFFF * Math.random();
         this.speed = ai.friend.speed;
 
@@ -597,21 +594,40 @@ class Friend extends AI {
         }, 1);
     }
 
-    Freeze() {
+    InFreeze() {
         this.ResetTimeOutList();
 
         this.sprite.tint = 0x00FF00;
         this.sprite.alpha = 0.2;
         this.speed = 0.8;
 
-        this.AddToTimeOutList(setTimeout(() => { this.speed = 0.1; }, 250));
-        this.AddToTimeOutList(setTimeout(() => { this.speed = 0.01; this.sprite.alpha = 1; }, 500));
-        this.AddToTimeOutList(setTimeout(() => { this.sprite.alpha = 0.2; }, 3000));
-        this.AddToTimeOutList(setTimeout(() => { this.sprite.alpha = 1; }, 3750));
-        this.AddToTimeOutList(setTimeout(() => { this.sprite.alpha = 0.2; }, 4250));
-        this.AddToTimeOutList(setTimeout(() => { this.sprite.alpha = 1; }, 4500));
-        this.AddToTimeOutList(setTimeout(() => { this.sprite.alpha = 0.2; }, 4750));
-        this.AddToTimeOutList(setTimeout(() => { this.Reset(); }, 5000));
+        /**
+         * Structured like this to improve performance when freezing a long tail.
+         */
+        this.AddToTimeOutList(setTimeout(() => {
+            this.speed = 0.1;
+            this.AddToTimeOutList(setTimeout(() => {
+                this.speed = 0.01; this.sprite.alpha = 1;
+                this.AddToTimeOutList(setTimeout(() => {
+                    this.sprite.alpha = 0.2;
+                    this.AddToTimeOutList(setTimeout(() => {
+                        this.sprite.alpha = 1;
+                        this.AddToTimeOutList(setTimeout(() => {
+                            this.sprite.alpha = 0.2;
+                            this.AddToTimeOutList(setTimeout(() => {
+                                this.sprite.alpha = 1;
+                                this.AddToTimeOutList(setTimeout(() => {
+                                    this.sprite.alpha = 0.2;
+                                    this.AddToTimeOutList(setTimeout(() => {
+                                        this.Reset();
+                                    }, 250));
+                                }, 250));
+                            }, 250));
+                        }, 500));
+                    }, 750));
+                }, 2500));
+            }, 250));
+        }, 250));
     }
 }
 

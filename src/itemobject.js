@@ -206,7 +206,7 @@ class PUMunch extends PowerUp {
     constructor(resourcePath, world, posX, posY, width, height, colliderType = ColliderTypes.Circle) {
         super(resourcePath, world, posX, posY, width, height, colliderType);
 
-        this.sprite.tint = 0xAF2F2F;
+        this.sprite.tint = 0xAF1A4F;
     }
 
     CollisionPlayer(player) {

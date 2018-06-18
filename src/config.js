@@ -20,8 +20,8 @@ module.exports = {
     },
 
     steemScore: {
-        version: 0.1,
-        hsversion: 3,
+        version: 0.2,
+        hsversion: 4,
     },
 
     // DynamicObject AI
