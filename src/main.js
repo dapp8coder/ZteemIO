@@ -151,37 +151,37 @@ function MakeGameMenu() {
 
         //Player
         world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, 0, 0, 31, 24, 24).tint = 0x0000FF;
-        world.camera.gui.CreateTextInSlideChild("Player.", insContainer, 30, 33, 0xFFFFFF, 16);
+        world.camera.gui.CreateTextInSlideChild("Player.", insContainer, 30, 33, 0xFFFFFF, 14);
 
         //Tail
         world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, 0, 0, 75, 20, 20).tint = 0xFF0000;
-        world.camera.gui.CreateTextInSlideChild("Enemy Head. Tail count * 10 * head kill count.", insContainer, 30, 75, 0xFFFFFF, 16);
+        world.camera.gui.CreateTextInSlideChild("Enemy Head. Tail count * 10 * kill count.", insContainer, 30, 75, 0xFFFFFF, 14);
         var tail = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, 0, 0, 103, 8, 8);
         setInterval(() => {
             tail.tint = 0xFFFFFF * Math.random();
         }, 10);
-        world.camera.gui.CreateTextInSlideChild("Enemy Tail. 10 points. ", insContainer, 30, 96, 0xFFFFFF, 16);
+        world.camera.gui.CreateTextInSlideChild("Enemy Tail. 10 points. ", insContainer, 30, 96, 0xFFFFFF, 14);
 
         //Star
         world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, 0, 0, 132, 8, 8).tint = 0xAADDFF;
-        world.camera.gui.CreateTextInSlideChild("Player Food. 1 point.", insContainer, 30, 126, 0xFFFFFF, 16);
+        world.camera.gui.CreateTextInSlideChild("Player Food. 1 point.", insContainer, 30, 126, 0xFFFFFF, 14);
 
         //Powerups
         world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, 0, 0, 160, 14, 14).tint = 0x00FF2F;
-        world.camera.gui.CreateTextInSlideChild("Power-up Freeze. 10 points.", insContainer, 30, 157, 0xFFFFFF, 16);
+        world.camera.gui.CreateTextInSlideChild("Power-up Freeze. 10 points.", insContainer, 30, 157, 0xFFFFFF, 14);
         world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, 0, 0, 180, 14, 14).tint = 0xFFFF00;
-        world.camera.gui.CreateTextInSlideChild("Power-up Scatter. 10 points.", insContainer, 30, 177, 0xFFFFFF, 16);
+        world.camera.gui.CreateTextInSlideChild("Power-up Scatter. 10 points.", insContainer, 30, 177, 0xFFFFFF, 14);
         world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, 0, 0, 200, 14, 14).tint = 0xFF00FF;
-        world.camera.gui.CreateTextInSlideChild("Power-up Invincible. 10 points.", insContainer, 30, 197, 0xFFFFFF, 16);
+        world.camera.gui.CreateTextInSlideChild("Power-up Invincible. 10 points.", insContainer, 30, 197, 0xFFFFFF, 14);
         world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, 0, 0, 220, 14, 14).tint = 0xAF1A4F;
-        world.camera.gui.CreateTextInSlideChild("Power-up Eat Enemy. 10 points.", insContainer, 30, 217, 0xFFFFFF, 16);
+        world.camera.gui.CreateTextInSlideChild("Power-up Eat Enemy. 10 points.", insContainer, 30, 217, 0xFFFFFF, 14);
 
-        world.camera.gui.CreateTextInSlideChild("Click / Touch and hold down while moving to move the player.\nEat as much food as possible while avoiding the enemy.",
+        world.camera.gui.CreateTextInSlideChild("Click / Touch and hold down while moving to\nmove the player.\nEat as much food as possible while avoiding the\nenemy.",
             insContainer, -5, 258, 0xFFFFFF, 14);
         world.camera.ResizeList();
 
-        var buttonStart2 = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, ResizeTypes.Position, 0, 320, 96, 48);
-        var testText3 = world.camera.gui.CreateTextInSlideChild("GOT IT!", insContainer, 0 + 17, 334, 0xFFFFFF, 13);
+        var buttonStart2 = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, ResizeTypes.Position, 0, 350, 96, 48);
+        var testText3 = world.camera.gui.CreateTextInSlideChild("GOT IT!", insContainer, 0 + 17, 364, 0xFFFFFF, 13);
 
         buttonStart2.Input(true, true, "pointerup", event => {
             world.camera.gui.RemoveSlide(instructions);
