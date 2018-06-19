@@ -226,7 +226,7 @@ class Player extends DynamicObject {
         this.sprite.tint = 0x0000FF;
         this.sprite.alpha = 1;
 
-        this.playerTarget = new BaseObject(this.world, this.prop.x, this.prop.y, 8, 8);
+        this.playerTarget = new BaseObject(this.world, this.prop.x, this.prop.y, 12, 12);
         this.playerTarget.sprite = JPixi.Sprite.Create(resourcePath,
             this.playerTarget.prop.x, this.playerTarget.prop.y,
             this.playerTarget.prop.width, this.playerTarget.prop.height,
