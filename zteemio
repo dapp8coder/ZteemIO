@@ -9,7 +9,7 @@
     <title>Zteem.io</title>
     <link rel="manifest" href="zteemio_files/manifest.json">
     <link rel="apple-touch-icon" sizes="64x64" href="zteemio_files/images/white1px.png">
-    <link rel="stylesheet" href="zteemio_files/main.css ">
+    <link rel="stylesheet" href="zteemio_files/main.css">
 </head>
 
 <body>
@@ -20,7 +20,7 @@
     </div>
 
     <!-- Load Scripts -->
-    <script src="zteemio_files/bundle.js "></script>
+    <script src="zteemio_files/bundle.js"></script>
 </body>
 
 </html>

@@ -155,7 +155,7 @@ function MakeGameMenu() {
 
         //Tail
         world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, 0, 0, 75, 20, 20).tint = 0xFF0000;
-        world.camera.gui.CreateTextInSlideChild("Enemy Head. Tail count * 10 points * head kill count.", insContainer, 30, 75, 0xFFFFFF, 16);
+        world.camera.gui.CreateTextInSlideChild("Enemy Head. Tail count * 10 * head kill count.", insContainer, 30, 75, 0xFFFFFF, 16);
         var tail = world.camera.gui.CreateSpriteInSlideChild(site.img + "white1px.png", insContainer, 0, 0, 103, 8, 8);
         setInterval(() => {
             tail.tint = 0xFFFFFF * Math.random();
