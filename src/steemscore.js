@@ -12,16 +12,16 @@ class SteemScore {
         //Default high scores
         /**@type {[]} */
         this.list = [
-            ["15000", "zteemio", "2018-06-18"],
-            ["14000", "zteemio", "2018-06-18"],
-            ["12000", "zteemio", "2018-06-18"],
-            ["10000", "zteemio", "2018-06-18"],
-            ["8000", "zteemio", "2018-06-18"],
-            ["4000", "zteemio", "2018-06-18"],
-            ["2000", "zteemio", "2018-06-18"],
-            ["1000", "zteemio", "2018-06-18"],
-            ["500", "zteemio", "2018-06-18"],
-            ["100", "zteemio", "2018-06-18"]
+            ["15000", "zteemio", "2018-08-14"],
+            ["14000", "zteemio", "2018-08-14"],
+            ["12000", "zteemio", "2018-08-14"],
+            ["10000", "zteemio", "2018-08-14"],
+            ["8000", "zteemio", "2018-08-14"],
+            ["4000", "zteemio", "2018-08-14"],
+            ["2000", "zteemio", "2018-08-14"],
+            ["1000", "zteemio", "2018-08-14"],
+            ["500", "zteemio", "2018-08-14"],
+            ["100", "zteemio", "2018-08-14"]
         ];
 
         this.playerScore = -1;
@@ -163,9 +163,9 @@ class SteemScore {
         else topic = "[Zteem.io] My score, can you beat it?";
 
         var tags;
-        if (this.playerPos === 1) tags = ["zteemio", "gaming", "games", "steemgc", "gamersunited"];
-        else if (this.playerPos != 1 && this.playerPos <= 3) tags = ["zteemio", "gaming", "games"];
-        else tags = ["zteemio", "gaming"];
+        if (this.playerPos === 1) tags = ["gaming", "zteemio", "games", "steemgc", "gamersunited"];
+        else if (this.playerPos != 1 && this.playerPos <= 3) tags = ["gaming", "zteemio", "games"];
+        else tags = ["gaming", "zteemio"];
 
         var user = this.jsc2.profile.user;
         var link = "zteemio-" + user + "-" + date;

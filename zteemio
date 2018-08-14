@@ -8,8 +8,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Zteem.io</title>
     <link rel="manifest" href="zteemio_files/manifest.json">
-    <link rel="apple-touch-icon" sizes="64x64" href="zteemio_files/images/white1px.png">
+    <link rel="apple-touch-icon" sizes="64x64" href="zteemio_files/images/zteemio_app.png">
     <link rel="stylesheet" href="zteemio_files/main.css">
+    <link rel="icon" href="zteemio_files/images/favicon.ico">
 </head>
 
 <body>

@@ -10,22 +10,8 @@ const { JSC2 } = require("./lib/jsc2");
 const { SteemScore } = require("./steemscore");
 const { site } = require("./config");
 const steemScoreConfig = require("./config").steemScore;
-
 const { Sound } = require("pixi-sound");
 
-const musicTest = Sound.from({
-    url: site.audio + "music_theme.flac",
-    autoPlay: false,
-    volume: 0.1,
-    loop: true,
-    complete: function () {
-        console.log('Sound finished');
-    },
-});
-
-/**
- * Add some music and sounds.
- */
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GAME GLOBALS
@@ -60,6 +46,8 @@ JPixi.Event.Start(() => {
 
     GameState = MakeGameMenu(); // Create main menu.
 
+    InitAudio();
+
     /// DEBUG
     // var FPS = JPixi.Text.CreateFPS();
 
@@ -84,6 +72,33 @@ JPixi.Event.Resize(() => {
 JPixi.Event.Orientation(() => {
 
 });
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// AUDIO
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function InitAudio() {
+    /**
+     * @type {Sound}
+     */
+    var audioMusic = undefined;
+
+    world.gameManager.On("MusicPlay", params => {
+        audioMusic = Sound.from({
+            url: params[1],
+            autoPlay: true,
+            volume: params[2],
+            loop: params[3]
+        });
+    });
+
+    world.gameManager.On("MusicStop", params => {
+        if (audioMusic != undefined) audioMusic.stop();
+    });
+
+    world.gameManager.Trigger("MusicPlay", site.audio + "music_theme.flac", 0.1, true);
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,7 +200,8 @@ function MakeGameMenu() {
 
         buttonStart2.Input(true, true, "pointerup", event => {
             world.camera.gui.RemoveSlide(instructions);
-            musicTest.stop();
+
+            world.gameManager.Trigger("MusicStop");
 
             MakeGameWorld();
         });
@@ -316,6 +332,8 @@ function MakeGameWorld() {
         var gameGUIBackground = world.camera.gui.CreateSpriteInSlide(site.img + "black1px.png", gameGUI, ResizeTypes.FullSize, 0, 0, appConf.cameraWidth, appConf.cameraHeight);
         gameGUIBackground.alpha = 0;
         gameGUI.setChildIndex(gameGUIBackground, 0);
+
+        world.gameManager.Trigger("MusicPlay", site.audio + "music_gameover.flac", 0.1, false);
 
         var gameOverContainer = world.camera.gui.CreateContainerInSlide(gameGUI, true, true, 0, 0);
         var gameOver = world.camera.gui.CreateTextInSlide("GAME OVER MAN, GAME OVER!\nSCORE: " + score, gameGUI, true, 120, 0xFFFFFF, 18, "Courier", "center");

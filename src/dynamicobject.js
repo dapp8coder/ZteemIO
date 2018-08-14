@@ -459,7 +459,7 @@ class Friend extends AI {
 
     Update(cell) {
         if (this.nr1 && this.target.distance < 40000 && this.sprite.alpha == 1) this.sprite.tint = 0xFF0000;
-        else if (!this.gameOver && !this.target.reverse && this.speed > 0.8) this.sprite.tint = 0xFFFFFF * Math.random();
+        else if (!this.gameOver && !this.target.reverse) this.sprite.tint = 0xFFFFFF * Math.random();
 
         if (this.target.reverse && !this.nr1) {
             this.sprite.alpha = 0.2;
@@ -597,7 +597,6 @@ class Friend extends AI {
     InFreeze() {
         this.ResetTimeOutList();
 
-        this.sprite.tint = 0x00FF00;
         this.sprite.alpha = 0.2;
         this.speed = 0.8;
 
