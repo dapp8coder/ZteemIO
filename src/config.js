@@ -6,7 +6,7 @@ module.exports = {
         img: "zteemio_files/images/",
         audio: "zteemio_files/audio/"
     },
-
+ 
     sc2Conf: {
         active: true,
         domainLocal: "localhost",
